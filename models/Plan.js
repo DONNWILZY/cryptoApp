@@ -40,14 +40,12 @@ const InvestmentPlanSchema = new mongoose.Schema({
         type: Number,
         //required: true
     },
-    interestCounter: {
-        type: Number,
-        default: 0
-    },
+    
     depositProofs: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'DepositProof'
     }],
+    
 });
 
 InvestmentPlanSchema.pre('save', function (next) {

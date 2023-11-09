@@ -5,6 +5,11 @@ const axios = require('axios');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
+// Import the scheduler
+require('./utilities/scheduler');
+
+// Your other application setup...
+
 
 // Middleware
 app.use(express.json());

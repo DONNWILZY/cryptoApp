@@ -145,6 +145,52 @@ const createPlan = async (req, res) => {
       return new Date(start + duration * 24 * 60 * 60 * 1000);
     }
   };
+
+  const approveDeposit = async (depositProofId) => {
+    try {
+      // Find the deposit proof
+      const depositProof = await DepositProof.findById(depositProofId).populate('user investmentPlan');
+  
+      // Check if the deposit proof exists
+      if (!depositProof) {
+        console.log('Deposit proof not found');
+        return;
+      }
+  
+      // Check if the deposit proof is already approved
+      if (depositProof.isApproved.status === 'approved') {
+        console.log('Deposit proof is already approved');
+        return;
+      }
+  
+      // Update the deposit proof status to approved
+      depositProof.isApproved.status = 'approved';
+      await depositProof.save();
+  
+      // Update the plan's subscriber with the approved deposit proof
+      const planSubscriber = depositProof.investmentPlan.subscribers.find(subscriber => subscriber.user.equals(depositProof.user._id));
+      if (planSubscriber) {
+        planSubscriber.paymentInfo.isApproved.status = 'approved';
+        await depositProof.investmentPlan.save();
+      }
+  
+      // Update the user's wallet with the deposit amount
+      depositProof.user.wallet.balance += depositProof.investmentPlan.amount;
+      await depositProof.user.save();
+  
+      // Check if the subscription has ended and add totalProfit to the user's wallet
+      const currentDate = new Date();
+      if (currentDate >= planSubscriber.subscriptionEnd) {
+        depositProof.user.wallet.balance += depositProof.investmentPlan.totalProfit;
+        await depositProof.user.save();
+      }
+  
+      console.log('Deposit proof approved successfully');
+    } catch (error) {
+      console.error('Error approving deposit proof:', error);
+    }
+  };
+  
   
 
-module.exports = { createInvestmentPlan, createPlan, subscribeToPlan };
+module.exports = { createInvestmentPlan, createPlan, subscribeToPlan, approveDeposit };

@@ -34,39 +34,47 @@ const InvestmentPlanSchema = new mongoose.Schema({
       type: Number,
       // required: true,
     },
-    interestCounter: {
-      type: Number,
-      default: 0,
-    },
+   
     subscribers: [{
-      user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
-      },
-      paymentInfo: {
-        depositProof: {
+        user: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: 'DepositProof',
+          ref: 'User',
         },
-        isApproved: {
-          status: {
-            type: String,
-            enum: ['pending', 'approved', 'declined', 'cancelled'],
-            default: 'pending',
+        paymentInfo: {
+          depositProof: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'DepositProof',
+          },
+          isApproved: {
+            status: {
+              type: String,
+              enum: ['pending', 'approved', 'declined', 'cancelled'],
+              default: 'pending',
+            },
+          },
+          interestCounter: {
+            perHour: {
+              type: Number,
+              default: 0,
+            },
+            perDay: {
+              type: Number,
+              default: 0,
+            },
           },
         },
-      },
-      subscriptionStart: {
-        type: Date,
-        default: Date.now,
-      },
-      subscriptionEnd: {
-        type: Date,
-        default: function () {
-          return new Date(Date.now() + this.duration * 24 * 60 * 60 * 1000);
+        subscriptionStart: {
+          type: Date,
+          default: Date.now,
         },
-      },
-    }],
+        subscriptionEnd: {
+          type: Date,
+          default: function () {
+            return new Date(Date.now() + this.duration * 24 * 60 * 60 * 1000);
+          },
+        },
+      }],
+      
   });
 
 // Pre hook to calculate totalProfit and total based on durationType
@@ -126,6 +134,24 @@ InvestmentPlanSchema.pre('save', async function (next) {
   
     next();
   });
+
+  InvestmentPlanSchema.pre('save', function (next) {
+    if (this.durationType === 'hours') {
+      this.totalProfit = (this.amount * this.interestPercentage * (this.duration / 24)) / 100;
+      this.subscribers.forEach(subscriber => {
+        subscriber.paymentInfo.interestCounter.perHour += this.totalProfit / this.duration;
+      });
+    } else if (this.durationType === 'days') {
+      this.totalProfit = (this.amount * this.interestPercentage * this.duration) / 100;
+      this.subscribers.forEach(subscriber => {
+        subscriber.paymentInfo.interestCounter.perDay += this.totalProfit / this.duration;
+      });
+    }
+  
+    this.total = this.totalProfit + this.amount;
+    next();
+  });
+  
   
 
 const InvestmentPlan = mongoose.model('InvestmentPlan', InvestmentPlanSchema);
