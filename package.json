@@ -1,0 +1,28 @@
+{
+  "name": "trustfx",
+  "version": "1.0.0",
+  "description": "CRYPTO INVESTMENT APP",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "build": "index.js"
+  },
+  "keywords": [
+    "CRPTO",
+    "BITCOIN"
+  ],
+  "author": "EFFIONG GODSWILL",
+  "license": "MIT",
+  "dependencies": {
+    "@mapbox/node-pre-gyp": "^1.0.11",
+    "axios": "^1.6.1",
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.0.0"
+  }
+}
