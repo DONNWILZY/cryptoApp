@@ -146,6 +146,8 @@ const createPlan = async (req, res) => {
     }
   };
 
+
+
   const approveDeposit = async (depositProofId) => {
     try {
       // Find the deposit proof
@@ -154,13 +156,13 @@ const createPlan = async (req, res) => {
       // Check if the deposit proof exists
       if (!depositProof) {
         console.log('Deposit proof not found');
-        return;
+        return null;
       }
   
       // Check if the deposit proof is already approved
       if (depositProof.isApproved.status === 'approved') {
         console.log('Deposit proof is already approved');
-        return;
+        return null;
       }
   
       // Update the deposit proof status to approved
@@ -170,7 +172,19 @@ const createPlan = async (req, res) => {
       // Update the plan's subscriber with the approved deposit proof
       const planSubscriber = depositProof.investmentPlan.subscribers.find(subscriber => subscriber.user.equals(depositProof.user._id));
       if (planSubscriber) {
+        // Update isApproved status
         planSubscriber.paymentInfo.isApproved.status = 'approved';
+  
+        // Update subscription start and end dates based on durationType
+        const currentDate = new Date();
+        if (depositProof.investmentPlan.durationType === 'hours') {
+          planSubscriber.subscriptionStart = currentDate;
+          planSubscriber.subscriptionEnd = new Date(currentDate.getTime() + depositProof.investmentPlan.duration * 60 * 60 * 1000);
+        } else if (depositProof.investmentPlan.durationType === 'days') {
+          planSubscriber.subscriptionStart = currentDate;
+          planSubscriber.subscriptionEnd = new Date(currentDate.getTime() + depositProof.investmentPlan.duration * 24 * 60 * 60 * 1000);
+        }
+  
         await depositProof.investmentPlan.save();
       }
   
@@ -186,10 +200,16 @@ const createPlan = async (req, res) => {
       }
   
       console.log('Deposit proof approved successfully');
+      return depositProof; // Return the approved deposit proof
     } catch (error) {
       console.error('Error approving deposit proof:', error);
+      return null;
     }
   };
+  
+  
+
+  
   
   
 

@@ -10,21 +10,32 @@ router.post('/subscribe', subscribeToPlan);
 
 // Route to approve a deposit
 router.post('/approve/:depositProofId', async (req, res) => {
-    try {
-      const { depositProofId } = req.params;
-      await approveDeposit(depositProofId);
-  
+  try {
+    const { depositProofId } = req.params;
+    const depositProof = await approveDeposit(depositProofId);
+
+    if (depositProof) {
       res.status(200).json({
         success: true,
         message: 'Deposit proof approved successfully',
+        data: depositProof,
       });
-    } catch (error) {
-      console.error('Error approving deposit proof:', error);
-      res.status(500).json({
+    } else {
+      res.status(404).json({
         success: false,
-        message: 'Internal server error',
+        message: 'Deposit proof not found or already approved',
       });
     }
-  });
+  } catch (error) {
+    console.error('Error approving deposit proof:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+});
+
+
+  
 
 module.exports = router;
