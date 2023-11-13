@@ -1,8 +1,8 @@
 const cron = require('node-cron');
-const updateProfitAndMoveToWallet = require('../middleWare/updateProfit');
+const updateProfitAndMoveToWallet = require('../middleware/updateProfit');
 
-// Schedule to run every 5 minutes
-cron.schedule('*/1` * * * *', async () => {
-  console.log('Running the updateProfitAndMoveToWallet function...');
+// Schedule to run every minute
+cron.schedule('*/1 * * * *', async () => {
+  console.log('Running interest Counter');
   await updateProfitAndMoveToWallet();
 });

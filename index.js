@@ -6,7 +6,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 // Import the scheduler
-require('./utilities/scheduler');
+ require('./utilities/scheduler');
 
 // Your other application setup...
 
@@ -21,32 +21,36 @@ dotenv.config();
 const authRoute = require('./routes/auth');
 const coiRateRoute = require('./routes/coinRate');
 const planRoute = require('./routes/planRoute');
+const viewDepositforInvestment = require('./routes/viewPaymentproofForInvestmentRoute');
+const swapRoute = require('./routes/swapRoute');
 
 // Routes middlewares
 app.use('/api/auth', authRoute);
 app.use('/api/coinRate', coiRateRoute);
 app.use('/api/plan', planRoute);
+app.use('/api/View', viewDepositforInvestment);
+app.use('/api/swap', swapRoute);
 
-app.get('/currentPrice', async (req, res) => {
-    try {
-      // Make an HTTP GET request to the API endpoint.
-      let urlapi  = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd';
-      const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd');
+// app.get('/currentPrice', async (req, res) => {
+//     try {
+//       // Make an HTTP GET request to the API endpoint.
+//       let urlapi  = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd';
+//       const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd');
   
-      // Parse the JSON response into a JavaScript object.
-      const data = response.data;
+//       // Parse the JSON response into a JavaScript object.
+//       const data = response.data;
   
-      // Assuming that the response is an array of objects, you can access the current price of the first item in the array like this:
-      const currentPrice = data[0].current_price;
+//       // Assuming that the response is an array of objects, you can access the current price of the first item in the array like this:
+//       const currentPrice = data[0].current_price;
   
-      // Send the current price as the response.
-      res.json({ currentPrice });
-    } catch (error) {
-      // Handle any errors that may occur during the request.
-      console.error('Error:', error);
-      res.status(500).json({ error: 'Failed to fetch current price' });
-    }
-  });
+//       // Send the current price as the response.
+//       res.json({ currentPrice });
+//     } catch (error) {
+//       // Handle any errors that may occur during the request.
+//       console.error('Error:', error);
+//       res.status(500).json({ error: 'Failed to fetch current price' });
+//     }
+//   });
 
 
   
@@ -124,7 +128,7 @@ const currencyUrl = `${process.env.currencyUrl}:${PORT}`;
 // Database connection URL
 const cloudDB = process.env.databaseUrl;
 const localDB = process.env.MONGODB_URI;
-const dataB =  cloudDB  || localDB ;
+const dataB =     localDB  || cloudDB;
 
 // Routes
 app.get('/', (req, res) => {

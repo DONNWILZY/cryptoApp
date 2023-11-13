@@ -29,5 +29,23 @@ const CashDepositSchema = new mongoose.Schema({
     }
 });
 
-const CashDeposit = mongoose.model('CashDeposit', CashDepositSchema);
-module.exports = CashDeposit;
+// const CashDeposit = mongoose.model('CashDeposit', CashDepositSchema);
+// module.exports = CashDeposit;
+
+
+// const mongoose = require('mongoose');
+// const ProofSchema = require('./Proof'); // Assuming the path is correct
+
+// const DepositProofSchema = new mongoose.Schema({
+//     proofType: {
+//         type: String,
+//         default: 'deposit',
+//         // Additional validation if needed
+//     },
+//     proof: ProofSchema,
+//     // Add other fields specific to DepositProof
+// });
+
+// const DepositProof = mongoose.model('DepositProof', DepositProofSchema);
+
+// module.exports = DepositProof;

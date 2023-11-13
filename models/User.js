@@ -43,6 +43,18 @@ const UserSchema = new mongoose.Schema({
         balance: {
             type: Number,
             default: 0
+        },
+        investment: {
+            type: Number,
+            default: 0
+        },
+        interest: {
+            type: Number,
+            default: 0
+        },
+        total: {
+            type: Number,
+            default: 0
         }
         // You can include additional wallet properties like transaction history, etc.
     },
@@ -76,6 +88,13 @@ const UserSchema = new mongoose.Schema({
         ref: 'DepositProof'
     }]
 });
+
+// Pre-save hook to calculate the total wallet value
+UserSchema.pre('save', function (next) {
+    // Calculate the total value by summing up all wallet fields
+    this.wallet.total = this.wallet.balance + this.wallet.investment + this.wallet.interest;
+    next();
+  });
 
 const User = mongoose.model('User', UserSchema);
 
