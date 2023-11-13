@@ -132,7 +132,7 @@ const currencyUrl = `${process.env.currencyUrl}:${PORT}`;
 // Database connection URL
 const cloudDB = process.env.databaseUrl;
 const localDB = process.env.MONGODB_URI;
-const dataB =     localDB  || cloudDB;
+const dataB =      cloudDB   ||  localDB;
 
 // Routes
 app.get('/', (req, res) => {
