@@ -7,21 +7,24 @@ const BuySchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
+    proof: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Proof',
+    },
     proofType: {
         type: String,
-        default: 'Buy Coin',
-    },
-    proof: ProofSchema, // Assuming you have a ProofSchema defined
-
-    coin: {
-        type: Number,
-        required: true
+        default: 'Sell Coin',
     },
     status: {
         type: String,
-        enum: ['Pending', 'Reviewing', 'Approved', 'Rejected'],
-        default: 'Pending'
+        enum: ['pending', 'approved', 'declined', 'cancelled'],
+        default: 'pending',
     },
+    coin: {
+        type: String,
+        required: true
+    },
+  
     amount: {
         type: Number,
         required: true

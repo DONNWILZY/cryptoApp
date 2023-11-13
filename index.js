@@ -23,6 +23,8 @@ const coiRateRoute = require('./routes/coinRate');
 const planRoute = require('./routes/planRoute');
 const viewDepositforInvestment = require('./routes/viewPaymentproofForInvestmentRoute');
 const swapRoute = require('./routes/swapRoute');
+const reversalRoute = require('./routes/reversalroute');
+const sellRoute = require('./routes/sellRout');
 
 // Routes middlewares
 app.use('/api/auth', authRoute);
@@ -30,6 +32,8 @@ app.use('/api/coinRate', coiRateRoute);
 app.use('/api/plan', planRoute);
 app.use('/api/View', viewDepositforInvestment);
 app.use('/api/swap', swapRoute);
+app.use('/api/reverse', reversalRoute);
+app.use('/api/sell', sellRoute);
 
 // app.get('/currentPrice', async (req, res) => {
 //     try {

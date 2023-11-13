@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const ProofSchema = require('./proof'); // Make sure to provide the correct path
 
-const ResversalSchema = new mongoose.Schema({
+const ReversalSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -51,15 +51,12 @@ const ResversalSchema = new mongoose.Schema({
     timestamps: true, // Add timestamps
 });
 
-
 // Pre-save hook to calculate reversalFee before saving the document
-ResversalSchema.pre('save', function (next) {
+ReversalSchema.pre('save', function (next) {
     // Calculate the reversalFee as 10% of the amount
     this.reversalFee = 0.1 * this.amount;
     next();
 });
 
-
-
-const Resversal = mongoose.model('Resversal', ResversalSchema);
-module.exports = Resversal;
+const Reversal = mongoose.model('Reversal', ReversalSchema);
+module.exports = Reversal;

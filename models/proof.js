@@ -43,11 +43,16 @@ const ProofSchema = new mongoose.Schema(
             ref: 'Swap',
            // required: true
         },
-        resversal: {
+        reversal: {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Resversal',
+            ref: 'Reversal',
            // required: true
         },
+        sell: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Sell',
+         // required: true
+      },
   
   },
   {
