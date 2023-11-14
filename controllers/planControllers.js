@@ -236,84 +236,82 @@ const subscribeToPlan = async (req, res) => {
 
   const updateDeposit = async (depositProofId, updateData) => {
     try {
-        // Find the deposit proof
-        const depositProof = await DepositProof.findById(depositProofId).populate('user investmentPlan');
-
-        // Check if the deposit proof exists
-        if (!depositProof) {
-            console.log('Deposit proof not found');
-            return null;
-        }
-
-        // Save the current status for comparison later
-        const currentStatus = depositProof.status;
-
-        // Update the deposit proof status and/or admin note
-        if (updateData.status !== undefined) {
-            depositProof.status = updateData.status;
-        }
-
-        if (updateData.adminNote !== undefined) {
-            depositProof.adminNote = updateData.adminNote;
-        }
-
-        // Save the updated deposit proof
-        await depositProof.save();
-
-        // Check if the proof has a corresponding investment plan
-        if (depositProof.investmentPlan) {
-            // Update each plan's subscriber with the updated deposit proof
-            for (const subscriber of depositProof.investmentPlan.subscribers) {
-                // Update status, start time, and end time
-                if (updateData.status !== undefined) {
-                    subscriber.paymentInfo.status = updateData.status;
-                }
-
-                // Update subscription start date based on current date and time
-                subscriber.subscriptionStart = new Date();
-
-                // Update subscription end date based on durationType
-                const currentDate = new Date();
-                if (depositProof.investmentPlan.durationType === 'hours') {
-                    subscriber.subscriptionEnd = new Date(
-                        currentDate.getTime() + depositProof.investmentPlan.duration * 60 * 60 * 1000
-                    );
-                } else if (depositProof.investmentPlan.durationType === 'days') {
-                    subscriber.subscriptionEnd = new Date(
-                        currentDate.getTime() + depositProof.investmentPlan.duration * 24 * 60 * 60 * 1000
-                    );
-                }
-            }
-
-            // Use Promise.all to wait for all async operations to complete
-            await Promise.all(depositProof.investmentPlan.subscribers.map(subscriber => subscriber.save()));
-        }
-
-        // Update the user's wallet with the deposit amount for investment
-        if (updateData.status === 'approved' && depositProof.investmentPlan) {
-            depositProof.user.wallet.investment += depositProof.investmentPlan.amount;
-            console.log(depositProof.user.wallet.investment);
-        } else if (
-            (currentStatus === 'approved' || currentStatus === 'pending') &&
-            (updateData.status === 'declined' || updateData.status === 'cancelled')
-        ) {
-            // Reverse the amount added to the wallet if the status changes from approved or pending to declined or cancelled
-            depositProof.user.wallet.investment -= depositProof.investmentPlan.amount;
-            console.log(depositProof.user.wallet.investment);
-        }
-
-        // Save the updated user
-        await depositProof.user.save();
-
-        console.log('Deposit proof updated successfully');
-
-        // Return the updated deposit proof
-        return depositProof.toObject();
-    } catch (error) {
-        console.error('Error updating deposit proof:', error.message);
+      // Find the deposit proof
+      const depositProof = await DepositProof.findById(depositProofId).populate('user investmentPlan');
+  
+      // Check if the deposit proof exists
+      if (!depositProof) {
+        console.log('Deposit proof not found');
         return null;
+      }
+  
+      // Save the current status for comparison later
+      const currentStatus = depositProof.status;
+  
+      // Update the deposit proof status and/or admin note
+      if (updateData.status !== undefined) {
+        depositProof.status = updateData.status;
+      }
+  
+      if (updateData.adminNote !== undefined) {
+        depositProof.adminNote = updateData.adminNote;
+      }
+  
+      // Save the updated deposit proof
+      await depositProof.save();
+  
+      // Check if the proof has a corresponding investment plan
+      if (depositProof.investmentPlan) {
+        // Update each plan's subscriber with the updated deposit proof
+        for (const subscriber of depositProof.investmentPlan.subscribers) {
+          // Update status, start time, and end time
+          if (updateData.status !== undefined) {
+            subscriber.paymentInfo.status = updateData.status;
+          }
+  
+          // Update subscription start date based on current date and time
+          subscriber.subscriptionStart = new Date();
+  
+          // Update subscription end date based on durationType
+          const currentDate = new Date();
+          if (depositProof.investmentPlan.durationType === 'hours') {
+            subscriber.subscriptionEnd = new Date(currentDate.getTime() + depositProof.investmentPlan.duration * 60 * 60 * 1000);
+          } else if (depositProof.investmentPlan.durationType === 'days') {
+            subscriber.subscriptionEnd = new Date(currentDate.getTime() + depositProof.investmentPlan.duration * 24 * 60 * 60 * 1000);
+          }
+  
+          // Save the updated plan
+          await depositProof.investmentPlan.save();
+        }
+      }
+  
+      // Update the user's wallet with the deposit amount for investment
+      if (updateData.status === 'approved' && depositProof.investmentPlan) {
+        depositProof.user.wallet.investment += depositProof.investmentPlan.amount;
+        console.log(depositProof.user.wallet.investment);
+      } else if (
+        (currentStatus === 'approved' || currentStatus === 'pending') &&
+        (updateData.status === 'declined' || updateData.status === 'cancelled')
+      ) {
+        // Reverse the amount added to the wallet if the status changes from approved or pending to declined or cancelled
+        depositProof.user.wallet.investment -= depositProof.investmentPlan.amount;
+        console.log(depositProof.user.wallet.investment);
+      }
+  
+      // Save the updated user
+      await depositProof.user.save();
+  
+      console.log('Deposit proof updated successfully');
+  
+      // Return the updated deposit proof
+      return depositProof.toObject();
+    } catch (error) {
+      console.error('Error updating deposit proof:', error.message);
+      return null;
     }
-};
+  };
+  
+  
 
 
 

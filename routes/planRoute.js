@@ -44,39 +44,32 @@ router.post('/approve/:depositProofId', async (req, res) => {
 // Route to update deposit proof
 router.patch('/status/:depositProofId', async (req, res) => {
   try {
-      const { depositProofId } = req.params;
-      const updateData = req.body; // Extract update data from the request body
+    const { depositProofId } = req.params;
+    const updateData = req.body; // Extract update data from the request body
 
-      // Validate updateData
-      if (!updateData || (Object.keys(updateData).length === 0)) {
-          return res.status(400).json({
-              success: false,
-              message: 'Invalid update data. Provide at least one valid property.',
-          });
-      }
+    const updatedDepositProof = await updateDeposit(depositProofId, updateData);
 
-      const updatedDepositProof = await updateDeposit(depositProofId, updateData);
-
-      if (updatedDepositProof) {
-          res.status(200).json({
-              success: true,
-              message: 'Deposit proof updated successfully',
-              data: updatedDepositProof,
-          });
-      } else {
-          res.status(404).json({
-              success: false,
-              message: 'Deposit proof not found or failed to update',
-          });
-      }
-  } catch (error) {
-      console.error('Error updating deposit proof:', error);
-      res.status(500).json({
-          success: false,
-          message: 'Internal server error',
+    if (updatedDepositProof) {
+      res.status(200).json({
+        success: true,
+        message: 'Deposit proof updated successfully',
+        data: updatedDepositProof,
       });
+    } else {
+      res.status(404).json({
+        success: false,
+        message: 'Deposit proof not found or failed to update',
+      });
+    }
+  } catch (error) {
+    console.error('Error updating deposit proof:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
   }
 });
+
 
 
 
