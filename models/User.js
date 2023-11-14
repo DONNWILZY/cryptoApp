@@ -86,7 +86,30 @@ const UserSchema = new mongoose.Schema({
     depositProofs: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'DepositProof'
+    }],
+
+    buy: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Buy'
+    }],
+
+    swap: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Swap'
+    }],
+
+    reversal: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Reversal'
+    }],
+
+    sell: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Sell'
     }]
+
+
+
 });
 
 // Pre-save hook to calculate the total wallet value

@@ -66,8 +66,8 @@ const InvestmentPlanSchema = new mongoose.Schema({
       },
       status: {
         type: String,
-        enum: ['pending', 'approved', 'declined', 'cancelled'],
-        default: 'pending',
+        enum: ['active', 'completed'],
+        default: 'active',
       },
     },
     
@@ -80,6 +80,11 @@ const InvestmentPlanSchema = new mongoose.Schema({
           default: function () {
             return new Date(Date.now() + this.duration * 24 * 60 * 60 * 1000);
           },
+        },
+        planStatus: {
+          type: String,
+          enum: ['pending', 'approved', 'declined', 'cancelled', 'completed'],
+          default: 'pending',
         },
       }],
       
