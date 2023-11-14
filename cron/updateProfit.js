@@ -88,9 +88,10 @@ const updateProfitAndMoveToWallet = async () => {
   }
 };
 
-console.log('hello world')
+
 // Export the function if needed
 module.exports = updateProfitAndMoveToWallet;
+console.log('hello world');
 
 
 
