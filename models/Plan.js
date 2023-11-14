@@ -92,28 +92,58 @@ const InvestmentPlanSchema = new mongoose.Schema({
 
   InvestmentPlanSchema.pre('save', async function (next) {
     try {
-        if (this.durationType === 'hours' || this.durationType === 'days') {
-            // Initialize counters to 0 for new subscribers
-            if (this.isNew) {
-                this.subscribers.forEach(subscriber => {
-                    subscriber.interestCounter = {
-                        perHour: 0,
-                        perDay: 0
-                    };
-                });
-            }
-        } else {
-            console.error('Invalid durationType:', this.durationType);
+      if (this.durationType === 'hours' || this.durationType === 'days') {
+        // Initialize counters to 0 for new subscribers
+        if (this.isNew) {
+          this.subscribers.forEach(subscriber => {
+            subscriber.interestCounter = {
+              perHour: 0,
+              perDay: 0
+            };
+          });
         }
-
+      } else {
+        console.error('Invalid durationType:', this.durationType);
+      }
+  
+      // Ensure that this.wallet is defined before accessing its properties
+      if (this.wallet) {
         // Calculate the total value by summing up all wallet fields
-        this.wallet.total = this.wallet.balance + this.wallet.investment + this.wallet.interest;
+        this.wallet.total = (this.wallet.balance || 0) + (this.wallet.investment || 0) + (this.wallet.interest || 0);
+      } else {
+        console.error('Wallet is undefined.');
+      }
     } catch (error) {
-        console.error('Error initializing counters or calculating total:', error);
+      console.error('Error initializing counters or calculating total:', error);
     }
-
+  
     next();
-});
+  });
+  
+//   InvestmentPlanSchema.pre('save', async function (next) {
+//     try {
+//         if (this.durationType === 'hours' || this.durationType === 'days') {
+//             // Initialize counters to 0 for new subscribers
+//             if (this.isNew) {
+//                 this.subscribers.forEach(subscriber => {
+//                     subscriber.interestCounter = {
+//                         perHour: 0,
+//                         perDay: 0
+//                     };
+//                 });
+//             }
+//         } else {
+//             console.error('Invalid durationType:', this.durationType);
+//         }
+
+//         // Calculate the total value by summing up all wallet fields
+//         this.wallet.total = this.wallet.balance + this.wallet.investment + this.wallet.interest;
+//     } catch (error) {
+//         console.error('Error initializing counters or calculating total:', error);
+//     }
+
+//     next();
+// });
 
 
   
