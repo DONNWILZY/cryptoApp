@@ -67,96 +67,100 @@ const createPlan = async (req, res) => {
   };
 
 
-  ////// SUNSCRIBE TO PLAN
-  const subscribeToPlan = async (req, res) => {
-    try {
-      const { userId, planId, proofImage, textProof } = req.body;
-  
-      const user = await User.findById(userId);
-      const plan = await InvestmentPlan.findById(planId);
-  
-      if (!user || !plan) {
-        return res.status(404).json({
-          success: false,
-          message: 'User or investment plan not found',
-        });
-      }
-  
-      if (user.subscribedPlans.includes(planId)) {
-        return res.status(400).json({
-          success: false,
-          message: 'User is already subscribed to this plan',
-        });
-      }
-  
-      // Generate a unique short ID for the transaction
-      const options = {
-        length: 5,  // option = digits to be generatedd
-      };
+// Subscribe to Plan
+const subscribeToPlan = async (req, res) => {
+  try {
+    const { userId, planId, proofImage, textProof } = req.body;
 
-      const transactionId = shortid.generate(options);
-      console.log(transactionId);
-  
-      const depositProof = new DepositProof({
-        user: userId,
-        investmentPlan: planId,
-        proofImage,
-        textProof,
-        proofType: 'investment',
-        transactionId, // Include the generated transaction ID
-      });
-  
-      try {
-        await depositProof.save();
-  
-        // Update proof type and proof type ID
-        const proofTypeId = depositProof._id;
-        depositProof.proofTypeId = proofTypeId;
-        depositProof.proofType = 'investment';
-  
-        await depositProof.save();
-      } catch (error) {
-        console.error('Error saving deposit proof:', error);
-        return res.status(500).json({
-          success: false,
-          message: 'Failed to save deposit proof',
-        });
-      }
-  
-      user.subscribedPlans.push(planId);
-      user.depositProofs.push(depositProof._id);
-  
-      await user.save();
-  
-      const subscriptionStart = Date.now();
-      const subscriptionEnd = calculateSubscriptionEnd(plan.durationType, plan.duration, subscriptionStart);
-  
-      plan.subscribers.push({
-        user: userId,
-        paymentInfo: {
-          depositProof: depositProof._id,
-          status: 'pending',
-        },
-        subscriptionStart,
-        subscriptionEnd,
-      });
-  
-      await plan.save();
-  
-      res.status(200).json({
-        success: true,
-        message: 'User subscribed to the plan successfully',
-        data: user, /// remember to remove password from response 
-      });
-    } catch (error) {
-      console.error('Error subscribing to plan:', error);
-      res.status(500).json({
+    const user = await User.findById(userId);
+    const plan = await InvestmentPlan.findById(planId);
+
+    if (!user || !plan) {
+      return res.status(404).json({
         success: false,
-        message: 'Internal server error',
+        message: 'User or investment plan not found',
       });
     }
-  };
-  
+
+    // Check if the user is already subscribed to this plan
+    const isUserSubscribed = plan.subscribers.some(subscriber => subscriber.user.equals(userId));
+
+    if (isUserSubscribed) {
+      return res.status(400).json({
+        success: false,
+        message: 'User is already subscribed to this plan',
+      });
+    }
+
+    // Generate a unique short ID for the transaction
+    const options = {
+      length: 5,
+    };
+
+    const transactionId = shortid.generate(options);
+    console.log(transactionId);
+
+    const depositProof = new DepositProof({
+      user: userId,
+      investmentPlan: planId,
+      proofImage,
+      textProof,
+      proofType: 'investment',
+      transactionId,
+    });
+
+    try {
+      await depositProof.save();
+
+      // Update proof type and proof type ID
+      const proofTypeId = depositProof._id;
+      depositProof.proofTypeId = proofTypeId;
+      depositProof.proofType = 'investment';
+
+      await depositProof.save();
+    } catch (error) {
+      console.error('Error saving deposit proof:', error);
+      return res.status(500).json({
+        success: false,
+        message: 'Failed to save deposit proof',
+      });
+    }
+
+    user.subscribedPlans.push(planId);
+    user.depositProofs.push(depositProof._id);
+
+    await user.save();
+
+    const subscriptionStart = Date.now();
+    const subscriptionEnd = calculateSubscriptionEnd(plan.durationType, plan.duration, subscriptionStart);
+
+    // Add a new subscriber to the subscribers array
+    plan.subscribers.push({
+      user: userId,
+      paymentInfo: {
+        depositProof: depositProof._id,
+        status: 'pending',
+      },
+      subscriptionStart,
+      subscriptionEnd,
+    });
+
+    await plan.save();
+
+    res.status(200).json({
+      success: true,
+      message: 'User subscribed to the plan successfully',
+      data: user, // Remember to remove the password from the response
+    });
+  } catch (error) {
+    console.error('Error subscribing to plan:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+};
+
   
   
   const calculateSubscriptionEnd = (durationType, duration, start) => {
