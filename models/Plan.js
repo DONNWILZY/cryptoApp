@@ -109,6 +109,8 @@ InvestmentPlanSchema.pre('save', async function (next) {
     // Calculate totalProfit based on interestPercentage and amount
     if (this.amount && this.interestPercentage) {
       this.totalProfit = (this.amount * this.interestPercentage) / 100;
+      // Update total to be the sum of totalProfit and amount
+      this.total = this.totalProfit + this.amount;
     }
   } catch (error) {
     console.error('Error initializing counters or calculating total:', error);
@@ -125,6 +127,47 @@ InvestmentPlanSchema.pre('validate', function (next) {
 
   next();
 });
+
+// InvestmentPlanSchema.pre('save', async function (next) {
+//   try {
+//     if (this.durationType === 'hours' || this.durationType === 'days') {
+//       // Initialize counters to 0 for new subscribers
+//       if (this.isNew) {
+//         this.subscribers.forEach(subscriber => {
+//           subscriber.interestCounter = {
+//             perHour: 0,
+//             perDay: 0
+//           };
+//         });
+//       }
+//     } else {
+//       console.error('Invalid durationType:', this.durationType);
+//     }
+
+//     // Calculate the total value by summing up all interest counters
+//     this.total = this.subscribers.reduce((total, subscriber) => {
+//       return total + subscriber.interestCounter.perHour + subscriber.interestCounter.perDay;
+//     }, 0);
+
+//     // Calculate totalProfit based on interestPercentage and amount
+//     if (this.amount && this.interestPercentage) {
+//       this.totalProfit = (this.amount * this.interestPercentage) / 100;
+//     }
+//   } catch (error) {
+//     console.error('Error initializing counters or calculating total:', error);
+//   }
+
+//   next();
+// });
+
+// InvestmentPlanSchema.pre('validate', function (next) {
+//   // Calculate interestPercentage based on totalProfit and amount
+//   if (this.totalProfit && this.amount) {
+//     this.interestPercentage = (this.totalProfit / this.amount) * 100;
+//   }
+
+//   next();
+// });
 
 const InvestmentPlan = mongoose.model('InvestmentPlan', InvestmentPlanSchema);
 
