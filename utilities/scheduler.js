@@ -1,4 +1,5 @@
 const cron = require('node-cron');
+const {updateProfitAndMoveToWallet} = require('../cron/updateProfit')
 
 
 // Schedule to run every minute
