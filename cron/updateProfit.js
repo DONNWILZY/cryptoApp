@@ -37,19 +37,32 @@
 // Import necessary models or dependencies
 const InvestmentPlan = require('../models/Plan');
 const user = require('../models/User');
+
+
 const updateProfitAndMoveToWallet = async () => {
   try {
+    console.log('Running updateProfitAndMoveToWallet...');
+
     const currentDate = new Date();
+    console.log('Current Date:', currentDate);
+
     const plans = await InvestmentPlan.find({
       'subscribers.subscriptionEnd': { $lte: currentDate },
       'subscribers.paymentInfo.status': 'approved',
     }).populate('subscribers.user');
 
     for (const plan of plans) {
+      console.log(`Processing plan: ${plan.name}`);
+
       for (const subscriber of plan.subscribers) {
         if (currentDate >= subscriber.subscriptionEnd) {
+          console.log(`Subscriber ${subscriber.user.username} subscription has ended.`);
+
           // Check if user and wallet exist before updating
           if (subscriber.user && subscriber.user.wallet) {
+            console.log(`Updating wallet for user: ${subscriber.user.username}`);
+
+            // Calculate and update interest in the wallet
             subscriber.user.wallet.interest += subscriber.interestCounter.perHour +
               subscriber.interestCounter.perDay;
 
@@ -68,10 +81,17 @@ const updateProfitAndMoveToWallet = async () => {
         }
       }
     }
+
+    console.log('updateProfitAndMoveToWallet completed successfully.');
   } catch (error) {
     console.error('Error updating profit and moving to wallet:', error);
   }
 };
+
+console.log('hello world')
+// Export the function if needed
+module.exports = updateProfitAndMoveToWallet;
+
 
 
 
