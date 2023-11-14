@@ -262,34 +262,31 @@ const subscribeToPlan = async (req, res) => {
 
         // Check if the proof has a corresponding investment plan
         if (depositProof.investmentPlan) {
-            // Update the plan's subscriber with the updated deposit proof
-            const planSubscriber = depositProof.investmentPlan.subscribers.find(
-                (subscriber) => subscriber.user && subscriber.user.equals(depositProof.user._id)
-            );
-
-            if (planSubscriber) {
+            // Update each plan's subscriber with the updated deposit proof
+            for (const subscriber of depositProof.investmentPlan.subscribers) {
                 // Update status, start time, and end time
                 if (updateData.status !== undefined) {
-                    planSubscriber.paymentInfo.status = updateData.status;
+                    subscriber.paymentInfo.status = updateData.status;
                 }
 
                 // Update subscription start date based on current date and time
-                planSubscriber.subscriptionStart = new Date();
+                subscriber.subscriptionStart = new Date();
 
                 // Update subscription end date based on durationType
                 const currentDate = new Date();
                 if (depositProof.investmentPlan.durationType === 'hours') {
-                    planSubscriber.subscriptionEnd = new Date(
+                    subscriber.subscriptionEnd = new Date(
                         currentDate.getTime() + depositProof.investmentPlan.duration * 60 * 60 * 1000
                     );
                 } else if (depositProof.investmentPlan.durationType === 'days') {
-                    planSubscriber.subscriptionEnd = new Date(
+                    subscriber.subscriptionEnd = new Date(
                         currentDate.getTime() + depositProof.investmentPlan.duration * 24 * 60 * 60 * 1000
                     );
                 }
-
-                await depositProof.investmentPlan.save();
             }
+
+            // Use Promise.all to wait for all async operations to complete
+            await Promise.all(depositProof.investmentPlan.subscribers.map(subscriber => subscriber.save()));
         }
 
         // Update the user's wallet with the deposit amount for investment
@@ -317,6 +314,7 @@ const subscribeToPlan = async (req, res) => {
         return null;
     }
 };
+
 
 
 
