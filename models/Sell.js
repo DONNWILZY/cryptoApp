@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const ProofSchema = require('./proof'); // Make sure to provide the correct path
 
-const BuySchema = new mongoose.Schema({
+const SellSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
@@ -41,5 +41,5 @@ const BuySchema = new mongoose.Schema({
     timestamps: true
 });
 
-const Buy = mongoose.model('Buy', BuySchema);
-module.exports = Buy;
+const Sell = mongoose.model('Sell', SellSchema);
+module.exports = Sell;

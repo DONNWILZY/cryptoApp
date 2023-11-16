@@ -11,10 +11,14 @@ const BuySchema = new mongoose.Schema({
         type: String,
         default: 'Buy Coin',
     },
-    proof: ProofSchema, // Assuming you have a ProofSchema defined
+    
+    proof: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Proof',
+    },
 
     coin: {
-        type: Number,
+        type: String, // Assuming it represents a type of cryptocurrency
         required: true
     },
     status: {

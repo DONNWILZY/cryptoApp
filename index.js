@@ -25,6 +25,7 @@ const viewDepositforInvestment = require('./routes/viewPaymentproofForInvestment
 const swapRoute = require('./routes/swapRoute');
 const reversalRoute = require('./routes/reversalroute');
 const sellRoute = require('./routes/sellRout');
+const userroute = require('./routes/userRoute');
 
 // Routes middlewares
 app.use('/api/auth', authRoute);
@@ -34,91 +35,97 @@ app.use('/api/View', viewDepositforInvestment);
 app.use('/api/swap', swapRoute);
 app.use('/api/reverse', reversalRoute);
 app.use('/api/sell', sellRoute);
-
-// app.get('/currentPrice', async (req, res) => {
-//     try {
-//       // Make an HTTP GET request to the API endpoint.
-//       let urlapi  = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd';
-//       const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd');
-  
-//       // Parse the JSON response into a JavaScript object.
-//       const data = response.data;
-  
-//       // Assuming that the response is an array of objects, you can access the current price of the first item in the array like this:
-//       const currentPrice = data[0].current_price;
-  
-//       // Send the current price as the response.
-//       res.json({ currentPrice });
-//     } catch (error) {
-//       // Handle any errors that may occur during the request.
-//       console.error('Error:', error);
-//       res.status(500).json({ error: 'Failed to fetch current price' });
-//     }
-//   });
+app.use('/api/user', userroute);
 
 
-  
-
-// // Define a route to fetch specific data for "Bitcoin."
-// app.get('/bitcoinData', async (req, res) => {
-//     try {
-//       // Make an HTTP GET request to the API endpoint.
-//       const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd');
-  
-//       // Parse the JSON response into a JavaScript array.
-//       const data = response.data;
-  
-//       // Find the "Bitcoin" cryptocurrency in the response.
-//       const bitcoinData = data.find(coin => coin.id === 'bitcoin');
-  
-//       if (bitcoinData) {
-//         // Extract the specific data for "Bitcoin."
-//         const { id, symbol, name, current_price } = bitcoinData;
-  
-//         // Send the extracted data as the response.
-//         res.json({ id, symbol, name, current_price });
-//       } else {
-//         // If "Bitcoin" is not found in the response, send an error message.
-//         res.status(404).json({ error: 'Bitcoin data not found' });
-//       }
-//     } catch (error) {
-//       // Handle any errors that may occur during the request.
-//       console.error('Error:', error);
-//       res.status(500).json({ error: 'Failed to fetch Bitcoin data' });
-//     }
-//   });
 
 
-//   // Define a route to fetch specific data for a cryptocurrency by its symbol.
-// app.get('/cryptoData/:symbol', async (req, res) => {
-//     const symbol = req.params.symbol.toLowerCase(); // Convert the symbol to lowercase for case-insensitivity
+
+
+app.get('/currentPrice', async (req, res) => {
+    try {
+      // Make an HTTP GET request to the API endpoint.
+      let urlapi  = 'https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd';
+      const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd');
   
-//     try {
-//       // Make an HTTP GET request to the API endpoint.
-//       const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd');
+      // Parse the JSON response into a JavaScript object.
+      const data = response.data;
   
-//       // Parse the JSON response into a JavaScript array.
-//       const data = response.data;
+      // Assuming that the response is an array of objects, you can access the current price of the first item in the array like this:
+      const currentPrice = data[0].current_price;
   
-//       // Find the cryptocurrency based on the provided symbol.
-//       const cryptoData = data.find(coin => coin.symbol.toLowerCase() === symbol);
+      // Send the current price as the response.
+      res.json({ currentPrice });
+    } catch (error) {
+      // Handle any errors that may occur during the request.
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Failed to fetch current price' });
+    }
+  });
+
+
   
-//       if (cryptoData) {
-//         // Extract the specific data for the cryptocurrency.
-//         const { id, symbol, name, current_price } = cryptoData;
+
+// Define a route to fetch specific data for "Bitcoin."
+app.get('/bitcoinData', async (req, res) => {
+    try {
+      // Make an HTTP GET request to the API endpoint.
+      const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd');
   
-//         // Send the extracted data as the response.
-//         res.json({ id, symbol, name, current_price });
-//       } else {
-//         // If the cryptocurrency is not found, send an error message.
-//         res.status(404).json({ error: 'Cryptocurrency data not found' });
-//       }
-//     } catch (error) {
-//       // Handle any errors that may occur during the request.
-//       console.error('Error:', error);
-//       res.status(500).json({ error: 'Failed to fetch cryptocurrency data' });
-//     }
-//   });
+      // Parse the JSON response into a JavaScript array.
+      const data = response.data;
+  
+      // Find the "Bitcoin" cryptocurrency in the response.
+      const bitcoinData = data.find(coin => coin.id === 'bitcoin');
+  
+      if (bitcoinData) {
+        // Extract the specific data for "Bitcoin."
+        const { id, symbol, name, current_price } = bitcoinData;
+  
+        // Send the extracted data as the response.
+        res.json({ id, symbol, name, current_price });
+      } else {
+        // If "Bitcoin" is not found in the response, send an error message.
+        res.status(404).json({ error: 'Bitcoin data not found' });
+      }
+    } catch (error) {
+      // Handle any errors that may occur during the request.
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Failed to fetch Bitcoin data' });
+    }
+  });
+
+
+  // Define a route to fetch specific data for a cryptocurrency by its symbol.
+app.get('/cryptoData/:symbol', async (req, res) => {
+    const symbol = req.params.symbol.toLowerCase(); // Convert the symbol to lowercase for case-insensitivity
+  
+    try {
+      // Make an HTTP GET request to the API endpoint.
+      const response = await axios.get('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd');
+  
+      // Parse the JSON response into a JavaScript array.
+      const data = response.data;
+  
+      // Find the cryptocurrency based on the provided symbol.
+      const cryptoData = data.find(coin => coin.symbol.toLowerCase() === symbol);
+  
+      if (cryptoData) {
+        // Extract the specific data for the cryptocurrency.
+        const { id, symbol, name, current_price } = cryptoData;
+  
+        // Send the extracted data as the response.
+        res.json({ id, symbol, name, current_price });
+      } else {
+        // If the cryptocurrency is not found, send an error message.
+        res.status(404).json({ error: 'Cryptocurrency data not found' });
+      }
+    } catch (error) {
+      // Handle any errors that may occur during the request.
+      console.error('Error:', error);
+      res.status(500).json({ error: 'Failed to fetch cryptocurrency data' });
+    }
+  });
   
   const port = 3000;
   app.listen(port, () => {

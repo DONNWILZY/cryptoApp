@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const Buy = require('./Buy'); // Adjust the path as needed
+
 
 const UserSchema = new mongoose.Schema({
     
@@ -85,12 +87,12 @@ const UserSchema = new mongoose.Schema({
     // Reference to multiple deposit proofs submitted by the user (array of ObjectIds)
     depositProofs: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'DepositProof'
+        ref: 'Proof'
     }],
 
     buy: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Buy'
+        ref: 'Buy', // Ensure this matches the model name
     }],
 
     swap: [{
