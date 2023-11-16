@@ -35,7 +35,7 @@ const createInvestmentPlan = async (req, res) => {
 const createPlan = async (req, res) => {
     try {
       // Extract data from the request body
-      const { name, description, amount, interestPercentage, duration, durationType } = req.body;
+      const { name, description, amount, interestPercentage, duration, durationType, totalProfit } = req.body;
   
       // Create a new InvestmentPlan instance
       const newInvestmentPlan = new InvestmentPlan({
@@ -45,6 +45,7 @@ const createPlan = async (req, res) => {
         interestPercentage,
         duration,
         durationType,
+        totalProfit
       });
   
       // Save the new investment plan to the database
@@ -117,6 +118,9 @@ const subscribeToPlan = async (req, res) => {
       depositProof.proofTypeId = proofTypeId;
       depositProof.proofType = 'investment';
 
+      // Update the amount field on the depositProof with the plan amount
+      depositProof.amount = plan.amount;
+
       await depositProof.save();
     } catch (error) {
       console.error('Error saving deposit proof:', error);
@@ -160,6 +164,7 @@ const subscribeToPlan = async (req, res) => {
     });
   }
 };
+
 
   
   

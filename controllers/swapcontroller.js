@@ -28,44 +28,46 @@ const initiateSwap = async (userId, swapToCoin, amount, currentCoin, walletAddre
 
 
 const attachProofAndSetPendingStatus = async (swapId, proofData) => {
-    try {
-      // Find the swap by ID
-      const swap = await Swap.findById(swapId);
-  
-      if (!swap) {
-        console.log('Swap not found');
-        return null;
-      }
+  try {
+    // Find the swap by ID
+    const swap = await Swap.findById(swapId);
 
-      // Generate a unique short ID for the transaction
-      const transactionId = shortid.generate();
-  
-      // Create a new Proof instance
-      const newProof = new Proof({
-        user: swap.user,
-        proofType: 'swap',
-        ...proofData,
-        swap: swap._id,  // Link the proof to the swap
-        transactionId,  // Include the generated transaction ID
-      });
-  
-      // Save the new proof
-      await newProof.save();
-  
-      // Update the swap with the proof and set status to 'pending'
-      swap.proof = newProof._id;
-      swap.status = 'pending';
-  
-      // Save the updated swap
-      await swap.save();
-  
-      // Return the updated swap
-      return swap;
-    } catch (error) {
-      console.error('Error attaching proof and setting pending status:', error);
+    if (!swap) {
+      console.log('Swap not found');
       return null;
     }
+
+    // Generate a unique short ID for the transaction
+    const transactionId = shortid.generate();
+
+    // Create a new Proof instance
+    const newProof = new Proof({
+      user: swap.user,
+      proofType: 'swap',
+      ...proofData,
+      swap: swap._id,  // Link the proof to the swap
+      transactionId,  // Include the generated transaction ID
+      amount: swap.amount, // Set amount to the swap amount
+    });
+
+    // Save the new proof
+    await newProof.save();
+
+    // Update the swap with the proof and set status to 'pending'
+    swap.proof = newProof._id;
+    swap.status = 'pending';
+
+    // Save the updated swap
+    await swap.save();
+
+    // Return the updated swap
+    return swap;
+  } catch (error) {
+    console.error('Error attaching proof and setting pending status:', error);
+    return null;
+  }
 };
+
 
 
 // Function to update status and adminNote on Proof and Swap

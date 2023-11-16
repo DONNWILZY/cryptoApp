@@ -22,6 +22,9 @@ const ProofSchema = new mongoose.Schema(
     textProof: {
       type: String,
     },
+    amount: {
+      type: Number,
+    },
     transactionId: {
       type: String,
     },

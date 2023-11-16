@@ -68,45 +68,47 @@ const updateReversalStatus = async (reversalId, status, adminNote) => {
 
 
 const attachProofAndSetPendingStatusForReversal = async (reversalId, { proofImage, textProof }) => {
-    try {
-        // Find the reversal by ID
-        const reversal = await Retrieval.findById(reversalId);
+  try {
+      // Find the reversal by ID
+      const reversal = await Retrieval.findById(reversalId);
 
-        if (!reversal) {
-            console.log('Reversal not found');
-            return null;
-        }
+      if (!reversal) {
+          console.log('Reversal not found');
+          return null;
+      }
 
-        // Generate a unique short ID for the transaction
-        const transactionId = shortid.generate();
+      // Generate a unique short ID for the transaction
+      const transactionId = shortid.generate();
 
-        // Create a new Proof instance
-        const newProof = new Proof({
-            user: reversal.user,
-            proofType: 'reversal',
-            proofImage,
-            textProof,
-            reversal: reversal._id,  // Link the proof to the reversal
-            transactionId,  // Include the generated transaction ID
-        });
+      // Create a new Proof instance
+      const newProof = new Proof({
+          user: reversal.user,
+          proofType: 'reversal',
+          proofImage,
+          textProof,
+          reversal: reversal._id,  // Link the proof to the reversal
+          transactionId,  // Include the generated transaction ID
+          amount: reversal.reversalFee, // Set amount to reversalFee
+      });
 
-        // Save the new proof
-        await newProof.save();
+      // Save the new proof
+      await newProof.save();
 
-        // Update the reversal with the proof and set status to 'pending'
-        reversal.proof = newProof._id;
-        reversal.status = 'pending';
+      // Update the reversal with the proof and set status to 'pending'
+      reversal.proof = newProof._id;
+      reversal.status = 'pending';
 
-        // Save the updated reversal
-        await reversal.save();
+      // Save the updated reversal
+      await reversal.save();
 
-        // Return the updated reversal
-        return reversal;
-    } catch (error) {
-        console.error('Error attaching proof and setting pending status for reversal:', error);
-        return null;
-    }
+      // Return the updated reversal
+      return reversal;
+  } catch (error) {
+      console.error('Error attaching proof and setting pending status for reversal:', error);
+      return null;
+  }
 };
+
 
 
 
