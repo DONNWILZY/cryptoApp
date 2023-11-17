@@ -2,28 +2,48 @@ const mongoose = require('mongoose');
 const shortid = require('shortid');
 const Sell = require('../models/Sell');
 const Proof = require('../models/proof');
+const User = require('../models/User');
 
-const initiateSell = async (userId, coin, amount, walletAddress, comment) => {
-    try {
+const initiateSell = async (userId, coin, amount, walletAddress, comment, callback) => {
+  try {
       // Create a new Sell document
       const newSell = new Sell({
-        user: userId,
-        coin,
-        amount,
-        walletAddress,
-        comment,
+          user: userId,
+          coin,
+          amount,
+          walletAddress,
+          comment,
       });
-  
+
       // Save the new sell document
       await newSell.save();
-  
-      // Return the newly created sell
+
+      // Update the user model with the new Sell ObjectId in the 'sell' field
+      await User.findByIdAndUpdate(userId, {
+          $push: { sell: newSell._id }
+      });
+
+      // If a callback function is provided, invoke it with the newly created sell
+      if (callback && typeof callback === 'function') {
+          callback(null, newSell);
+      }
+
+      // Alternatively, you can return the newly created sell if no callback is provided
       return newSell;
-    } catch (error) {
+  } catch (error) {
       console.error('Error initiating sell:', error);
-      return null;
-    }
-  };
+
+      // If a callback function is provided, invoke it with the error
+      if (callback && typeof callback === 'function') {
+          callback(error, null);
+      }
+
+      // Alternatively, you can throw the error if no callback is provided
+      throw error;
+  }
+};
+
+
   
 
   const updateSellStatus = async (sellId, status, adminNote) => {

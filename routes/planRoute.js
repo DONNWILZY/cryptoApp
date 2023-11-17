@@ -1,13 +1,34 @@
 const express = require('express');
 const router = express.Router();
-const { createInvestmentPlan, createPlan, subscribeToPlan, approveDeposit , updateDeposit } = require('../controllers/planControllers');
+const { 
+  createInvestmentPlan, 
+  createPlan, 
+  subscribeToPlan, 
+  approveDeposit , 
+  updateDeposit, 
+  getPlanById, 
+  getAllPlans, 
+  getUserPlanById ,
+  getAllPlan
+} = require('../controllers/planControllers');
 
 // Route to create an investment plan createPlan
 router.post('/create', createInvestmentPlan);
 router.post('/add', createPlan);
 router.post('/subscribe', subscribeToPlan);
 
-//subscribeToPlan
+
+// Get all plans without subs
+router.get('/onlyplan', getAllPlan);
+
+// Get all plans 
+router.get('/plans', getAllPlans);
+
+// Get plan by ID getUserPlanById
+router.get('/plans/:planId', getPlanById);
+
+// Get plan by ID  without subscribers getUserPlanById
+router.get('/single/:planId', getUserPlanById);
 
 
 //Route to approve deposit proof
@@ -76,6 +97,7 @@ router.patch('/status/:depositProofId', async (req, res) => {
 
 
 
-  
+  //,
+  //
 
 module.exports = router;

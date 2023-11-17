@@ -318,11 +318,91 @@ const subscribeToPlan = async (req, res) => {
   
   
 
+// Get all plans with subcribers
+const getAllPlan = async (req, res) => {
+  try {
+    const plans = await InvestmentPlan.find().select('-subscribers');;
+    res.status(200).json({
+      success: true,
+      data: plans,
+    });
+  } catch (error) {
+    console.error('Error getting all plans:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+};
 
+// Get all plans
+const getAllPlans = async (req, res) => {
+  try {
+    const plans = await InvestmentPlan.find();
+    res.status(200).json({
+      success: true,
+      data: plans,
+    });
+  } catch (error) {
+    console.error('Error getting all plans:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+};
 
+// Get plan by ID
+const getPlanById = async (req, res) => {
+  try {
+    const planId = req.params.planId;
+    const plan = await InvestmentPlan.findById(planId);
 
+    if (!plan) {
+      return res.status(404).json({
+        success: false,
+        message: 'Plan not found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: plan,
+    });
+  } catch (error) {
+    console.error('Error getting plan by ID:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+};
 
   
+const getUserPlanById = async (req, res) => {
+  try {
+    const planId = req.params.planId;
+    const plan = await InvestmentPlan.findById(planId).select('-subscribers');
+
+    if (!plan) {
+      return res.status(404).json({
+        success: false,
+        message: 'Plan not found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: plan,
+    });
+  } catch (error) {
+    console.error('Error getting plan by ID:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+};
 
 
   
@@ -350,4 +430,24 @@ const subscribeToPlan = async (req, res) => {
   
   
 
-module.exports = { createInvestmentPlan, createPlan, subscribeToPlan, approveDeposit , updateDeposit};
+module.exports = { 
+  getAllPlan,
+  getUserPlanById,
+  createInvestmentPlan, 
+  createPlan, 
+  subscribeToPlan, 
+  approveDeposit , 
+  updateDeposit,
+   getAllPlans,
+  getPlanById,
+
+};
+
+
+
+
+
+
+
+
+

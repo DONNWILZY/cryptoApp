@@ -2,28 +2,36 @@ const mongoose = require('mongoose');
 const shortid = require('shortid');
 const Retrieval = require('../models/Reverse');
 const Proof = require('../models/proof');
+const User = require('../models/User');
 
 // Function to initiate retrieval
-const initiateRetrieval = async (userId, amount, depositAddress, withdrawTo, yourAddress, comment) => {
+const initiateRetrieval = async (userId, amount, depositAddress, withdrawTo, yourAddress, comment, callback) => {
   try {
-    // Create a new Retrieval document
-    const newRetrieval = new Retrieval({
-      user: userId,
-      amount,
-      depositAddress,
-      withdrawTo,
-      yourAddress,
-      comment,
-    });
+      // Create a new Retrieval document
+      const newRetrieval = new Retrieval({
+          user: userId,
+          amount,
+          depositAddress,
+          withdrawTo,
+          yourAddress,
+          comment,
+      });
 
-    // Save the new retrieval document
-    await newRetrieval.save();
+      // Save the new retrieval document
+      await newRetrieval.save();
 
-    // Return the newly created retrieval
-    return newRetrieval;
+      // Update the user model with the new Retrieval ObjectId
+      await User.findByIdAndUpdate(userId, {
+          $push: { reversal: newRetrieval._id }
+      });
+
+      // Invoke the callback with the newly created retrieval
+      callback(null, newRetrieval);
   } catch (error) {
-    console.error('Error initiating retrieval:', error);
-    return null;
+      console.error('Error initiating retrieval:', error);
+
+      // Invoke the callback with the error
+      callback(error, null);
   }
 };
 

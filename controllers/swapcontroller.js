@@ -1,29 +1,41 @@
 const shortid = require('shortid');
 const Proof = require('../models/proof');
 const Swap = require('../models/Swap');
+const User = require('../models/User');
 
 const initiateSwap = async (userId, swapToCoin, amount, currentCoin, walletAddress, comment) => {
-    try {
-        // Create a new Swap document
-        const newSwap = new Swap({
-            user: userId,
-            swapToCoin,
-            amount,
-            currentCoin,
-            walletAddress,
-            comment,
-        });
+  try {
+      // Create a new Swap document
+      const newSwap = new Swap({
+          user: userId,
+          swapToCoin,
+          amount,
+          currentCoin,
+          walletAddress,
+          comment,
+      });
 
-        // Save the new swap document
-        await newSwap.save();
+      // Save the new swap document
+      await newSwap.save();
 
-        // Return the newly created swap
-        return newSwap;
-    } catch (error) {
-        console.error('Error initiating swap:', error);
-        return null;
-    }
+      // Update the user model with the ObjectId of the new swap
+      const user = await User.findById(userId);
+
+      if (user) {
+          user.swap.push(newSwap._id); // Assuming "swap" is the array field in the User model
+          await user.save();
+      } else {
+          console.error('User not found for swap update');
+      }
+
+      // Return the newly created swap
+      return newSwap;
+  } catch (error) {
+      console.error('Error initiating swap:', error);
+      return null;
+  }
 };
+
 
 
 

@@ -4,31 +4,24 @@ const { initiateRetrieval, updateReversalStatus, attachProofAndSetPendingStatusF
 
 // Route to initiate retrieval
 router.post('/initiate', async (req, res) => {
-  try {
-    const { userId, amount, depositAddress, withdrawTo, yourAddress, comment } = req.body;
+  const { userId, amount, depositAddress, withdrawTo, yourAddress, comment } = req.body;
 
-    const newRetrieval = await initiateRetrieval(userId, amount, depositAddress, withdrawTo, yourAddress, comment);
+  initiateRetrieval(userId, amount, depositAddress, withdrawTo, yourAddress, comment, (error, result) => {
+      if (error) {
+          return res.status(500).json({
+              success: false,
+              message: 'Failed to initiate retrieval',
+          });
+      }
 
-    if (newRetrieval) {
       res.status(200).json({
-        success: true,
-        message: 'Retrieval initiated successfully',
-        data: newRetrieval,
+          success: true,
+          message: 'Retrieval initiated successfully',
+          data: result,
       });
-    } else {
-      res.status(500).json({
-        success: false,
-        message: 'Failed to initiate retrieval',
-      });
-    }
-  } catch (error) {
-    console.error('Error initiating retrieval:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error',
-    });
-  }
+  });
 });
+
 
 // Update Reversal status and admin notes
 router.put('/status/:reversalId', async (req, res) => {

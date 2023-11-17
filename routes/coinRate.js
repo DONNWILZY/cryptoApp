@@ -3,6 +3,8 @@ const express = require('express');
 const router = express.Router();
 const { addCoinS, getAllCoins, getCoinBySymbol, getCoinById, addCoinPrice, updateCoinPrice } = require('../controllers/CointRateController');
 
+
+
 router.post('/add', addCoinS);
 router.post('/addcoin', addCoinPrice);
 router.get('/coins', getAllCoins);
