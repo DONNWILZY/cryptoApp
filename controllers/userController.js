@@ -26,18 +26,18 @@ const getAllUsers = async () => {
     }
 };
 
-// Example usage
-getAllUsers()
-    .then(users => {
-        if (users) {
-            console.log(users);
-        } else {
-            console.log('No users found.');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
+// // Example usage
+// getAllUsers()
+//     .then(users => {
+//         if (users) {
+//             console.log(users);
+//         } else {
+//             console.log('No users found.');
+//         }
+//     })
+//     .catch(error => {
+//         console.error('Error:', error);
+//     });
 
 
     const getUserById = async (req, res) => {

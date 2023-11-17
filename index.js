@@ -26,6 +26,7 @@ const swapRoute = require('./routes/swapRoute');
 const reversalRoute = require('./routes/reversalroute');
 const sellRoute = require('./routes/sellRout');
 const userroute = require('./routes/userRoute');
+const proofRoute = require('./routes/proofRoute');
 
 // Routes middlewares
 app.use('/api/auth', authRoute);
@@ -36,6 +37,7 @@ app.use('/api/swap', swapRoute);
 app.use('/api/reverse', reversalRoute);
 app.use('/api/sell', sellRoute);
 app.use('/api/user', userroute);
+app.use('/api/proof', proofRoute);
 
 
 

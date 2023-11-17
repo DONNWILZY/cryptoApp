@@ -41,7 +41,7 @@ const ProofSchema = new mongoose.Schema(
               ref: 'InvestmentPlan',
              // required: true
           },
-          sawp: {
+          swap: {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Swap',
            // required: true

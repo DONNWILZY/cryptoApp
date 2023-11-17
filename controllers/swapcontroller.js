@@ -82,7 +82,6 @@ const attachProofAndSetPendingStatus = async (swapId, proofData) => {
 
 
 
-// Function to update status and adminNote on Proof and Swap
 
 // Function to update status and adminNote on Proof and Swap
 const updateStatusAndAdminNote = async (swapId, status, adminNote) => {
