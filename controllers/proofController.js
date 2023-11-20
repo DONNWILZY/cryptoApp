@@ -81,7 +81,33 @@ const getProofById = async (req, res) => {
     }
   };
   
-
+  const getProofsByUserId = async (req, res) => {
+    try {
+      const userId = req.params.userId; // Assuming you pass the userId as a route parameter
+  
+      // Find all proofs for the specified user
+      const proofs = await Proof.find({ user: userId })
+        .populate('user', 'firstName lastName') // Populate only firstName and lastName
+        .populate({
+          path: 'investmentPlan',
+          select: '-subscribers', // Exclude subscribers field
+        })
+        .populate('swap')
+        .populate('reversal')
+        .populate('sell');
+  
+      res.status(200).json({
+        success: true,
+        data: proofs,
+      });
+    } catch (error) {
+      console.error('Error getting proofs by user ID:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+      });
+    }
+  };
   
   
   
@@ -93,4 +119,5 @@ const getProofById = async (req, res) => {
 module.exports = {
     getAllProofs,
     getProofById,
+    getProofsByUserId
 };

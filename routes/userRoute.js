@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User'); 
+const cacheManager = require('cache-manager');
 
 /////
-const {getUserById} = require('../controllers/userController'); 
+const {getUserById, getUserWalletWithConversion} = require('../controllers/userController'); 
 
 
 router.get('/users/:userId', getUserById);
@@ -36,5 +37,20 @@ router.get('/users', async (req, res) => {
         });
     }
 });
+
+router.get('/wallet/:userId', async (req, res) => {
+    try {
+      const userId = req.params.userId;
+  
+      // Call the controller function to get user wallet with conversion
+      const convertedWallet = await getUserWalletWithConversion(userId);
+  
+      // Send the converted wallet as the response
+      res.json({ convertedWallet });
+    } catch (error) {
+      console.error('Error:', error.message);
+      res.status(500).json({ error: 'Failed to fetch user wallet data' });
+    }
+  });
 
 module.exports = router;

@@ -5,6 +5,7 @@ const axios = require('axios');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
+const cacheManager = require('cache-manager');
 // Import the scheduler
  require('./utilities/scheduler');
 
