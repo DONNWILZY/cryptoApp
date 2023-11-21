@@ -11,6 +11,8 @@ const cacheManager = require('cache-manager');
 
 // Your other application setup...
 
+/// apply cors
+app.use(cors());
 
 // Middleware
 app.use(express.json());
