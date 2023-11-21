@@ -109,7 +109,7 @@ const registerUser = async (req, res) => {
         if (!isPasswordValid) {
             return res.status(400).json({
                 status: 'failed',
-                message: 'Invalid password',
+                message: 'Invalid password'
             });
         }
 
