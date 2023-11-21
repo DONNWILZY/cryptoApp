@@ -120,6 +120,7 @@ const registerUser = async (req, res) => {
             firstName: user.firstName,
             lastname: user.lastName,
             phone: user.phone,
+            role: user.role,
             createdAt: user.createdAt,
             updatedAt: user.updatedAt,
         };
