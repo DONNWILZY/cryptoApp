@@ -115,6 +115,7 @@ const registerUser = async (req, res) => {
         // Create a user details object with the desired fields
         const userDetails = {
             _id: user._id,
+            username: user.username,
             email: user.email,
             firstName: user.firstName,
             lastname: user.lastName,
