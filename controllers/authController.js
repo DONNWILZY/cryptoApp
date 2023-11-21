@@ -128,7 +128,7 @@ const registerUser = async (req, res) => {
             { userId: user._id },
             process.env.JWT_SEC_KEY,
             {
-                expiresIn: '24h',
+                expiresIn: '100h',
             }
         );
 
@@ -155,7 +155,7 @@ const registerUser = async (req, res) => {
         console.error(error);
         return res.status(500).json({
             status: 'failed',
-            message: 'Internal server error',
+            message: 'Internal server error'
         });
     }
 };
