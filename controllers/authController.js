@@ -8,6 +8,26 @@ dotenv.config();
 
 
 
+const sanitizeUser = (user) => {
+    const sanitizedUser = { ...user._doc };
+
+    // Remove sensitive fields
+    delete sanitizedUser.password;
+
+    // Add additional fields to remove if needed subscribedPlans
+    delete sanitizedUser.wallet;
+    delete sanitizedUser.swap;
+    delete sanitizedUser.subscribedPlans;
+    delete sanitizedUser.depositProofs;
+    delete sanitizedUser.buy;
+    delete sanitizedUser.reversal;
+    delete sanitizedUser.sell;
+   // delete sanitizedUser.buy;
+
+
+    return sanitizedUser;
+};
+
 const registerUser = async (req, res) => {
     const { firstName, lastName, username, phone, email, password } = req.body;
 
@@ -19,7 +39,6 @@ const registerUser = async (req, res) => {
             return res.status(400).json({
                 status: 'fail',
                 message: 'User already exists.',
-                //user: user,
             });
         }
 
@@ -32,16 +51,16 @@ const registerUser = async (req, res) => {
             phone,
             email,
             password: hashedPassword,
-            verified: true, // Assuming you want to skip the email verification
+            verified: true,
         });
 
         const savedUser = await newUser.save();
-        delete savedUser.password; // Remove the password field before sending the response
+        const sanitizedUser = sanitizeUser(savedUser);
 
         return res.status(200).json({
             status: 'success',
             message: 'Sign up successful.',
-            user: savedUser,
+            user: sanitizedUser,
         });
     } catch (error) {
         console.error('Error while registering user:', error);
@@ -52,6 +71,7 @@ const registerUser = async (req, res) => {
         });
     }
 };
+
 
 
   //////////SIGN-IN USER
