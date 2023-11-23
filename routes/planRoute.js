@@ -9,13 +9,16 @@ const {
   getPlanById, 
   getAllPlans, 
   getUserPlanById ,
-  getAllPlan
+  getAllPlan,
+  getSubscribersForUser
 } = require('../controllers/planControllers');
 
 // Route to create an investment plan createPlan
 router.post('/create', createInvestmentPlan);
 router.post('/add', createPlan);
 router.post('/subscribe', subscribeToPlan);
+// get plans for a particluar user 
+router.get('/user/:userId', getSubscribersForUser);
 
 
 // Get all plans without subs

@@ -404,6 +404,41 @@ const getUserPlanById = async (req, res) => {
   }
 };
 
+const getSubscribersForUser = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    // Use Mongoose to find investment plans associated with the user
+    const plans = await InvestmentPlan.find(
+      { 'subscribers.user': userId }, // Match plans where a subscriber has the specified user ID
+      {
+        name: 1, // Include the other fields you want
+        description: 1,
+        amount: 1,
+        interestPercentage: 1,
+        duration: 1,
+        durationType: 1,
+        totalProfit: 1,
+        total: 1,
+        subscribers: {
+          $elemMatch: { user: userId }, // Return only the subscriber that matches the user ID
+        },
+      }
+    );
+
+    res.status(200).json({
+      success: true,
+      data: plans,
+    });
+  } catch (error) {
+    console.error('Error getting subscribers for user:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+};
+
 
   
   
@@ -440,6 +475,7 @@ module.exports = {
   updateDeposit,
    getAllPlans,
   getPlanById,
+  getSubscribersForUser
 
 };
 
