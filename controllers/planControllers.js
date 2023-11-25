@@ -410,7 +410,8 @@ const getSubscribersForUser = async (req, res) => {
 
     // Use Mongoose to find investment plans associated with the user
     const plans = await InvestmentPlan.find(
-      { 'subscribers.user': userId }, // Match plans where a subscriber has the specified user ID
+      { 'subscribers.user': userId }, 
+      // Match plans where a subscriber has the specified user ID
       {
         name: 1, // Include the other fields you want
         description: 1,

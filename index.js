@@ -9,7 +9,6 @@ const cacheManager = require('cache-manager');
 // Import the scheduler
  require('./utilities/scheduler');
 
-// Your other application setup...
 
 /// apply cors
 app.use(cors());

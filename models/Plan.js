@@ -30,6 +30,10 @@ const InvestmentPlanSchema = new mongoose.Schema({
   totalProfit: {
     type: Number,
   },
+  isPopular: {
+    type: Boolean,
+    default: false,
+  },
   total: {
     type: Number,
   },
