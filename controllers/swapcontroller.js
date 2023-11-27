@@ -119,13 +119,115 @@ const updateStatusAndAdminNote = async (swapId, status, adminNote) => {
   };
   
 
-  
+
+// Get all swaps for all users
+const getAllSwaps = async (req, res) => {
+  try {
+    const swaps = await Swap.find()
+    .populate('proof', 'proofImage textProof status transactionId')
+    .populate('user', 'firstName lastName username');
+    res.status(200).json({
+      success: true,
+      data: swaps,
+    });
+  } catch (error) {
+    console.error('Error getting swaps:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+};
+
+// Get a single swap by ID
+const getSwapById = async (req, res) => {
+  try {
+    const swapId = req.params.id;
+    const swap = await Swap.findById(swapId)
+    .populate('proof', 'proofImage textProof status transactionId')
+    .populate('user', 'firstName lastName username');
+
+    if (!swap) {
+      return res.status(404).json({
+        success: false,
+        message: 'Swap not found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: swap,
+    });
+  } catch (error) {
+    console.error('Error getting swap by ID:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+};
+
+// Get all swaps for a single user
+const getAllSwapsForUser = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const swaps = await Swap.find({ user: userId })
+    .populate('proof', 'proofImage textProof status transactionId')
+    .populate('user', 'firstName lastName username');
+    res.status(200).json({
+      success: true,
+      data: swaps,
+    });
+  } catch (error) {
+    console.error('Error getting swaps for user:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+};
+
+// Get a single swap for a single user by ID
+const getSwapForUserById = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const swapId = req.params.id;
+    const swap = await Swap.findOne({ _id: swapId, user: userId })
+    .populate('proof', 'proofImage textProof status transactionId')
+    .populate('user', 'firstName lastName username');
+    if (!swap) {
+      return res.status(404).json({
+        success: false,
+        message: 'Swap not found',
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: swap,
+    });
+  } catch (error) {
+    console.error('Error getting swap by ID for user:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error',
+    });
+  }
+};
+
+
+
   
   
   
 
+
 module.exports = {
   initiateSwap,
   attachProofAndSetPendingStatus,
-  updateStatusAndAdminNote
+  updateStatusAndAdminNote,
+  getAllSwaps,
+  getSwapById,
+  getAllSwapsForUser,
+  getSwapForUserById,
 };

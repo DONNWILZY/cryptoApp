@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { initiateSwap, attachProofAndSetPendingStatus, updateStatusAndAdminNote } = require('../controllers/swapcontroller');
+const { initiateSwap, attachProofAndSetPendingStatus, updateStatusAndAdminNote, getAllSwaps, getSwapById, getAllSwapsForUser, getSwapForUserById, } = require('../controllers/swapcontroller');
 
 // Route to initiate a swap
 router.post('/initiate', async (req, res) => {
@@ -92,6 +92,18 @@ router.put('/status', async (req, res) => {
       });
     }
   });
+
+  // Get all swaps for all users
+router.get('/swaps', getAllSwaps);
+
+// Get a single swap by ID
+router.get('/swaps/:id', getSwapById);
+
+// Get all swaps for a single user
+router.get('/users/:userId', getAllSwapsForUser);
+
+// Get a single swap for a single user by ID
+router.get('/users/:userId/:id', getSwapForUserById);
   
 
 module.exports = router;

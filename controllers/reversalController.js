@@ -121,15 +121,15 @@ const attachProofAndSetPendingStatusForReversal = async (reversalId, { proofImag
 const getAllReversals = async (req, res) => {
     try {
       const reversals = await Reversal.find()
-        .populate('proof', 'proofImage textProof transactionId')
-        .populate('user', 'firstName lastName username');
+       
   
       res.status(200).json({
         success: true,
         data: reversals,
       });
     } catch (error) {
-      console.error('Error getting reversals:', error);
+      console.er .populate('proof', 'proofImage textProof transactionId')
+        .populate('user', 'firstName lastName username');ror('Error getting reversals:', error);
       res.status(500).json({
         success: false,
         message: 'Internal server error',
