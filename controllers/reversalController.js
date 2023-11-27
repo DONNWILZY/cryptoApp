@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const shortid = require('shortid');
 const Retrieval = require('../models/Reverse');
+const Reversal = require('../models/Reverse');
 const Proof = require('../models/proof');
 const User = require('../models/User');
 
@@ -117,6 +118,114 @@ const attachProofAndSetPendingStatusForReversal = async (reversalId, { proofImag
   }
 };
 
+const getAllReversals = async (req, res) => {
+    try {
+      const reversals = await Reversal.find()
+        .populate('proof', 'proofImage textProof transactionId')
+        .populate('user', 'firstName lastName username');
+  
+      res.status(200).json({
+        success: true,
+        data: reversals,
+      });
+    } catch (error) {
+      console.error('Error getting reversals:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+      });
+    }
+  };
+
+
+
+  const getReversalById = async (req, res) => {
+    try {
+      const reversalId = req.params.id;
+      const reversal = await Reversal.findById(reversalId)
+        .populate('proof', 'proofImage textProof transactionId')
+        .populate('user', 'firstName lastName username');
+  
+      if (!reversal) {
+        return res.status(404).json({
+          success: false,
+          message: 'Reversal not found',
+        });
+      }
+  
+      res.status(200).json({
+        success: true,
+        data: reversal,
+      });
+    } catch (error) {
+      console.error('Error getting reversal by ID:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+      });
+    }
+  };
+
+
+  const getAllReversalsForUser = async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      const reversals = await Reversal.find({ user: userId })
+        .populate('proof', 'proofImage textProof transactionId')
+        .populate('user', 'firstName lastName username');
+  
+      res.status(200).json({
+        success: true,
+        data: reversals,
+      });
+    } catch (error) {
+      console.error('Error getting reversals for user:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+      });
+    }
+  };
+  
+  const getReversalForUserById = async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      const reversalId = req.params.id;
+  
+      const reversal = await Reversal.findOne({ _id: reversalId, user: userId })
+        .populate('proof', 'proofImage textProof transactionId')
+        .populate('user', 'firstName lastName username');
+  
+      if (!reversal) {
+        return res.status(404).json({
+          success: false,
+          message: 'Reversal not found for the user',
+        });
+      }
+  
+      res.status(200).json({
+        success: true,
+        data: reversal,
+      });
+    } catch (error) {
+      console.error('Error getting reversal for user by ID:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+      });
+    }
+  };
+  
+ 
+  
+  
+  
+ 
+  
+  
+
+
+
 
 
 
@@ -134,6 +243,10 @@ const attachProofAndSetPendingStatusForReversal = async (reversalId, { proofImag
 module.exports = {
   initiateRetrieval,
   updateReversalStatus,
-  attachProofAndSetPendingStatusForReversal
+  attachProofAndSetPendingStatusForReversal,
+  getAllReversals, 
+  getReversalById, 
+  getAllReversalsForUser, 
+  getReversalForUserById
   
 };
