@@ -12,12 +12,12 @@ const CoinPaySchema = new mongoose.Schema({
         unique: true
     },
     address: {
-        type: Number,
+        type: String,
         //required: true
     },
     coinName: {
-        type: Date,
-        default: Date.now
+        type: String,
+       
     }
 });
 
