@@ -33,6 +33,19 @@ const SellSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+
+    CointToReceive: {
+        type: String,
+        required: true
+    },
+
+    CointTypeToReceive: {
+        type: String,
+        required: true
+    },
+    adminNote: {
+        type: [String],
+      },
     comment: {
         type: [String],
         required: true

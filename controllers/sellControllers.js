@@ -4,44 +4,47 @@ const Sell = require('../models/Sell');
 const Proof = require('../models/proof');
 const User = require('../models/User');
 
-const initiateSell = async (userId, coin, amount, walletAddress, comment, callback) => {
+const initiateSell = async (userId, coin, amount, walletAddress, CointToReceive, CointTypeToReceive, comment, callback) => {
   try {
-      // Create a new Sell document
-      const newSell = new Sell({
-          user: userId,
-          coin,
-          amount,
-          walletAddress,
-          comment,
-      });
+    // Create a new Sell document
+    const newSell = new Sell({
+      user: userId,
+      coin,
+      amount,
+      walletAddress,
+      CointToReceive,
+      CointTypeToReceive,
+      comment,
+    });
 
-      // Save the new sell document
-      await newSell.save();
+    // Save the new sell document
+    await newSell.save();
 
-      // Update the user model with the new Sell ObjectId in the 'sell' field
-      await User.findByIdAndUpdate(userId, {
-          $push: { sell: newSell._id }
-      });
+    // Update the user model with the new Sell ObjectId in the 'sell' field
+    await User.findByIdAndUpdate(userId, {
+      $push: { sell: newSell._id },
+    });
 
-      // If a callback function is provided, invoke it with the newly created sell
-      if (callback && typeof callback === 'function') {
-          callback(null, newSell);
-      }
+    // If a callback function is provided, invoke it with the newly created sell
+    if (callback && typeof callback === 'function') {
+      callback(null, newSell);
+    }
 
-      // Alternatively, you can return the newly created sell if no callback is provided
-      return newSell;
+    // Alternatively, you can return the newly created sell if no callback is provided
+    return newSell;
   } catch (error) {
-      console.error('Error initiating sell:', error);
+    console.error('Error initiating sell:', error);
 
-      // If a callback function is provided, invoke it with the error
-      if (callback && typeof callback === 'function') {
-          callback(error, null);
-      }
+    // If a callback function is provided, invoke it with the error
+    if (callback && typeof callback === 'function') {
+      callback(error, null);
+    }
 
-      // Alternatively, you can throw the error if no callback is provided
-      throw error;
+    // Alternatively, you can throw the error if no callback is provided
+    throw error;
   }
 };
+
 
 
   
@@ -124,6 +127,137 @@ const initiateSell = async (userId, coin, amount, walletAddress, comment, callba
       return null;
     }
   };
+
+
+
+
+  const getAllSells = async (req, res) => {
+    try {
+      const sells = await Sell.find()
+        .populate({
+          path: 'user',
+          select: 'firstName lastName username',
+        })
+        .populate({
+          path: 'proof',
+          select: 'proofImage textProof transactionId status',
+        });
+  
+      res.status(200).json({
+        success: true,
+        data: sells,
+      });
+    } catch (error) {
+      console.error('Error getting sells:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+      });
+    }
+  };
+  
+  const getSellById = async (req, res) => {
+    try {
+      const sellId = req.params.id;
+      const sell = await Sell.findById(sellId)
+        .populate({
+          path: 'user',
+          select: 'firstName lastName username',
+        })
+        .populate({
+          path: 'proof',
+          select: 'proofImage textProof transactionId status',
+        });
+  
+      if (!sell) {
+        return res.status(404).json({
+          success: false,
+          message: 'Sell not found',
+        });
+      }
+  
+      res.status(200).json({
+        success: true,
+        data: sell,
+      });
+    } catch (error) {
+      console.error('Error getting sell by ID:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+      });
+    }
+  };
+  
+  const getAllSellsForUser = async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      const sells = await Sell.find({ user: userId })
+        .populate({
+          path: 'user',
+          select: 'firstName lastName username',
+        })
+        .populate({
+          path: 'proof',
+          select: 'proofImage textProof transactionId status',
+        });
+  
+      res.status(200).json({
+        success: true,
+        data: sells,
+      });
+    } catch (error) {
+      console.error('Error getting sells for user:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+      });
+    }
+  };
+  
+  const getSellForUserById = async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      const sellId = req.params.id;
+      const sell = await Sell.findOne({ _id: sellId, user: userId })
+        .populate({
+          path: 'user',
+          select: 'firstName lastName username',
+        })
+        .populate({
+          path: 'proof',
+          select: 'proofImage textProof transactionId status',
+        });
+  
+      if (!sell) {
+        return res.status(404).json({
+          success: false,
+          message: 'Sell not found for the specified user',
+        });
+      }
+  
+      res.status(200).json({
+        success: true,
+        data: sell,
+      });
+    } catch (error) {
+      console.error('Error getting sell for user by ID:', error);
+      res.status(500).json({
+        success: false,
+        message: 'Internal server error',
+      });
+    }
+  };
+  
+
+
+
+
+
+
+
+
+
   
   
 
@@ -131,12 +265,16 @@ const initiateSell = async (userId, coin, amount, walletAddress, comment, callba
 
 
 
-
+// getSellById, getAllSellsForUser, getSellForUserById, getAllSells
 
 module.exports = {
     initiateSell,
     updateSellStatus,
-    attachProofAndSetPendingStatusForSell
+    attachProofAndSetPendingStatusForSell,
+    getSellById, 
+    getAllSellsForUser, 
+    getSellForUserById, 
+    getAllSells
 
     
   };

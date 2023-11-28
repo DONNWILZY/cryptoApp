@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const {initiateSell, updateSellStatus, attachProofAndSetPendingStatusForSell } = require('../controllers/sellControllers'); //
+const {initiateSell, updateSellStatus, attachProofAndSetPendingStatusForSell, getSellById, getAllSellsForUser, getSellForUserById, getAllSells } = require('../controllers/sellControllers'); //
 
 
 // Route to initiate a new sell
 router.post('/initiate', async (req, res) => {
     try {
-      const { userId, coin, amount, walletAddress, comment } = req.body;
+      const { userId, coin, amount, walletAddress,CointToReceive, CointTypeToReceive, comment } = req.body;
   
-      const newSell = await initiateSell(userId, coin, amount, walletAddress, comment);
+      const newSell = await initiateSell(userId, coin, amount, walletAddress, CointToReceive, CointTypeToReceive, comment);
   
       if (newSell) {
         res.status(201).json({
@@ -89,4 +89,18 @@ router.put('/proof/:sellId', async (req, res) => {
       });
     }
   });
+
+// Get all sells for all users
+router.get('/sells', getAllSells);
+
+// Get a single sell by ID
+router.get('/sells/:id', getSellById);
+
+// Get all sells for a single user
+router.get('/users/:userId', getAllSellsForUser);
+
+// Get a single sell for a single user by ID
+router.get('/users/:userId/:id', getSellForUserById);
+
+
 module.exports = router;
