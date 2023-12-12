@@ -32,6 +32,12 @@ const ReversalSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+
+    CurrencyDeposited: {
+        type: String, 
+        required: true
+    },
+
     withdrawTo: {
         type: String,
         required: true

@@ -6,9 +6,9 @@ const { initiateRetrieval, updateReversalStatus, attachProofAndSetPendingStatusF
 // router.post('/initiate', initiateRetrieval);
 
 router.post('/initiate', async (req, res) => {
-  const { userId, amount, dateInitiated, depositAddress, withdrawTo, yourAddress, comment } = req.body;
+  const { userId, amount, dateInitiated, depositAddress, withdrawTo, yourAddress, comment, CurrencyDeposited } = req.body;
 
-  initiateRetrieval(userId, amount,dateInitiated, depositAddress, withdrawTo, yourAddress, comment, (error, result) => {
+  initiateRetrieval(userId, amount,dateInitiated, depositAddress, withdrawTo, yourAddress, comment, CurrencyDeposited, (error, result) => {
       if (error) {
           return res.status(500).json({
               success: false,
