@@ -6,16 +6,18 @@ const Proof = require('../models/proof');
 const User = require('../models/User');
 
 // Function to initiate retrieval
-const initiateRetrieval = async (userId, amount, depositAddress, withdrawTo, yourAddress, comment, callback) => {
+const initiateRetrieval = async (userId, amount, dateInitiated, depositAddress, withdrawTo, yourAddress,  comment, callback) => {
   try {
       // Create a new Retrieval document
       const newRetrieval = new Retrieval({
           user: userId,
           amount,
+          dateInitiated,
           depositAddress,
           withdrawTo,
           yourAddress,
           comment,
+          
       });
 
       // Save the new retrieval document

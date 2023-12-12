@@ -57,10 +57,15 @@ const registerUser = async (req, res) => {
         const savedUser = await newUser.save();
         const sanitizedUser = sanitizeUser(savedUser);
 
+        const token = jwt.sign({ userId: savedUser._id }, process.env.JWT_SEC_KEY, {
+            expiresIn: "24h",
+          });
+
         return res.status(200).json({
             status: 'success',
             message: 'Sign up successful.',
             user: sanitizedUser,
+            token: token,
         });
     } catch (error) {
         console.error('Error while registering user:', error);

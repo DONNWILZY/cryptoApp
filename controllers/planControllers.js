@@ -81,6 +81,7 @@ const subscribeToPlan = async (req, res) => {
         success: false,
         message: 'User or investment plan not found',
       });
+      
     }
 
     // Check if the user is already subscribed to this plan

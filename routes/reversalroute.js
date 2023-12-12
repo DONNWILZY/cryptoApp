@@ -3,10 +3,12 @@ const router = express.Router();
 const { initiateRetrieval, updateReversalStatus, attachProofAndSetPendingStatusForReversal, getAllReversals, getReversalById, getAllReversalsForUser, getReversalForUserById } = require('../controllers/reversalController');
 
 // Route to initiate retrieval
-router.post('/initiate', async (req, res) => {
-  const { userId, amount, depositAddress, withdrawTo, yourAddress, comment } = req.body;
+// router.post('/initiate', initiateRetrieval);
 
-  initiateRetrieval(userId, amount, depositAddress, withdrawTo, yourAddress, comment, (error, result) => {
+router.post('/initiate', async (req, res) => {
+  const { userId, amount, dateInitiated, depositAddress, withdrawTo, yourAddress, comment } = req.body;
+
+  initiateRetrieval(userId, amount,dateInitiated, depositAddress, withdrawTo, yourAddress, comment, (error, result) => {
       if (error) {
           return res.status(500).json({
               success: false,

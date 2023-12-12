@@ -20,6 +20,7 @@ class AppError extends Error {
   }
 }
 
+
 // Middleware to verify JWT token
 const verifyToken = async (req, res, next) => {
   const bearerHeader = req.headers["authorization"];
@@ -36,14 +37,17 @@ const verifyToken = async (req, res, next) => {
   req.token = bearerToken;
 
   try {
+    // Use jwt.verify instead of jwt.decode
     const user = jwt.verify(req.token, process.env.JWT_SEC_KEY);
     req.user = user;
 
     next();
   } catch (err) {
-    return next(new createError("Token is not valid or expired", 403));
+    // Use the AppError class instead of createError
+    return next(new AppError("Token is not valid or expired", 403));
   }
 };
+
 
 
 // Middleware to verify user role as Admin

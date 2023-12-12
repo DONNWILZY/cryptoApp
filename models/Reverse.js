@@ -21,8 +21,12 @@ const ReversalSchema = new mongoose.Schema({
         default: 'pending',
     },
     depositAddress: {
-        type: String, // Change the type to String
+        type: String, 
         required: true
+    },
+    dateInitiated: {
+        type: Date, 
+        // required: true
     },
     amount: {
         type: Number,
@@ -41,7 +45,7 @@ const ReversalSchema = new mongoose.Schema({
         //required: true
     },
     reversalFee: {
-        type: Number, // Change the type to Number
+        type: Number, 
     },
     adminNote: {
         type: [String],
