@@ -20,15 +20,22 @@ const SellSchema = new mongoose.Schema({
         enum: ['pending', 'approved', 'declined', 'cancelled'],
         default: 'pending',
     },
+
+    amount: {
+        type: Number,
+        required: true
+    },
+
+    currency: {
+        type: String,
+        required: true
+    },
+
     coin: {
         type: String,
         required: true
     },
   
-    amount: {
-        type: Number,
-        required: true
-    },
     walletAddress: {
         type: String,
         required: true
