@@ -4,17 +4,18 @@ const Sell = require('../models/Sell');
 const Proof = require('../models/proof');
 const User = require('../models/User');
 
-const initiateSell = async (userId, coin, amount, currency, walletAddress, CointToReceive, CointTypeToReceive, comment, callback) => {
+const initiateSell = async (userId, coin, amount,  walletAddress, CointToReceive, CointTypeToReceive, currency, comment, callback) => {
   try {
     // Create a new Sell document
     const newSell = new Sell({
       user: userId,
       coin,
       amount,
-      currency,
+      
       walletAddress,
       CointToReceive,
       CointTypeToReceive,
+      currency,
       comment,
     });
 

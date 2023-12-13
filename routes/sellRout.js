@@ -6,9 +6,9 @@ const {initiateSell, updateSellStatus, attachProofAndSetPendingStatusForSell, ge
 // Route to initiate a new sell
 router.post('/initiate', async (req, res) => {
     try {
-      const { userId, coin, amount, walletAddress,CointToReceive, CointTypeToReceive, comment } = req.body;
+      const { userId, coin, amount, walletAddress,CointToReceive, CointTypeToReceive,currency, comment } = req.body;
   
-      const newSell = await initiateSell(userId, coin, amount, walletAddress, CointToReceive, CointTypeToReceive, comment);
+      const newSell = await initiateSell(userId, coin, amount, walletAddress, CointToReceive, CointTypeToReceive, currency, comment);
   
       if (newSell) {
         res.status(201).json({
