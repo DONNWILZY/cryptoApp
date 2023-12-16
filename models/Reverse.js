@@ -26,7 +26,7 @@ const ReversalSchema = new mongoose.Schema({
     },
     dateInitiated: {
         type: Date, 
-        // required: true
+        required: true
     },
     amount: {
         type: Number,
@@ -35,7 +35,7 @@ const ReversalSchema = new mongoose.Schema({
 
     CurrencyDeposited: {
         type: String, 
-        required: true
+       required: true
     },
 
     withdrawTo: {

@@ -14,6 +14,14 @@ const {verifyToken, verifyUser, verifyAdmin} = require('./middleWare/userAuthMid
 /// apply cors
 app.use(cors());
 
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  next();
+});
+
 // Middleware
 app.use(express.json());
 
@@ -31,6 +39,8 @@ const sellRoute = require('./routes/sellRout');
 const userroute = require('./routes/userRoute');
 const proofRoute = require('./routes/proofRoute');
 const coinPayRoute = require('./routes/coinpayRoute');
+const withdrawRoute = require('./routes/withdrawalRoute');
+
 
 // Routes middlewares
 app.use('/api/auth', authRoute);
@@ -43,6 +53,7 @@ app.use('/api/sell', sellRoute);
 app.use('/api/user', userroute);
 app.use('/api/proof', proofRoute);
 app.use('/api/account', coinPayRoute);
+app.use('/api/withdraw', withdrawRoute);
 
 
 
@@ -146,7 +157,7 @@ const currencyUrl = `${process.env.currencyUrl}:${PORT}`;
 // Database connection URL
 const cloudDB = process.env.databaseUrl;
 const localDB = process.env.MONGODB_URI;
-const dataB =      cloudDB   ||  localDB;
+const dataB =     localDB    ||   cloudDB; 
 
 // Routes
 app.get('/', (req, res) => {

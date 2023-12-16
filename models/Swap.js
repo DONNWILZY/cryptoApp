@@ -13,7 +13,7 @@ const SwapSchema = new mongoose.Schema({
     },
     proofType: {
         type: String,
-        default: 'swap',
+        default: 'Swap',
     },
     status: {
         type: String,

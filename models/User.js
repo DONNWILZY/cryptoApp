@@ -41,6 +41,7 @@ const UserSchema = new mongoose.Schema({
         type: String
         // You can add further validations or requirements as needed
     },
+    
     wallet: {
         balance: {
             type: Number,
