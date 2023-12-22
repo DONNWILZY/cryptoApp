@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const cacheManager = require('cache-manager');
+const {  } = require("firebase/app");
 const {verifyToken, verifyUser, verifyAdmin} = require('./middleWare/userAuthMiddleware');
 // Import the scheduler
  require('./utilities/scheduler');
@@ -26,6 +27,7 @@ app.use((req, res, next) => {
 app.use(express.json());
 
 // Load environment variables
+
 dotenv.config();
 
 // Import routes
@@ -157,7 +159,7 @@ const currencyUrl = `${process.env.currencyUrl}:${PORT}`;
 // Database connection URL
 const cloudDB = process.env.databaseUrl;
 const localDB = process.env.MONGODB_URI;
-const dataB =     localDB    ||   cloudDB; 
+const dataB =       cloudDB  ||    localDB; 
 
 // Routes
 app.get('/', (req, res) => {

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { initiateRetrieval, updateReversalStatus, attachProofAndSetPendingStatusForReversal, getAllReversals, getReversalById, getAllReversalsForUser, getReversalForUserById } = require('../controllers/reversalController');
+const { initiateRetrieval, updateReversalStatus, attachProofAndSetPendingStatusForReversal, getAllReversals, getReversalById, getAllReversalsForUser, getReversalForUserById, deleteReversal} = require('../controllers/reversalController');
 
 // Route to initiate retrieval
 // router.post('/initiate', initiateRetrieval);
@@ -100,6 +100,9 @@ router.get('/users/:userId', getAllReversalsForUser);
 
 // Get a single reversal for a single user by ID
 router.get('/users/:userId/:id', getReversalForUserById);
+
+// DELETE a reversal by ID
+router.delete('/delete/:id', deleteReversal);
 
 
 

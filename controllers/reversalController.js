@@ -219,6 +219,28 @@ const getAllReversals = async (req, res) => {
     }
   };
   
+
+  const deleteReversal = async (req, res) => {
+    const reversalId = req.params.id;
+  
+    try {
+      // Soft delete by updating the 'deleted' field to true
+      const result = await Reversal.findByIdAndUpdate(
+        reversalId,
+        { $set: { deleted: true } },
+        { new: true }
+      );
+  
+      if (!result) {
+        return res.status(404).json({ message: 'Reversal not found' });
+      }
+  
+      res.json({ message: 'Reversal deleted successfully', data: result });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  };
  
   
   
@@ -250,6 +272,7 @@ module.exports = {
   getAllReversals, 
   getReversalById, 
   getAllReversalsForUser, 
-  getReversalForUserById
+  getReversalForUserById,
+  deleteReversal
   
 };

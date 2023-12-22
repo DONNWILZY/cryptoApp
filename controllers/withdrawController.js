@@ -4,7 +4,7 @@ const Withdraw = require('../models/withdraw');
 
 const withdraw = async (req, res) => {
   try {
-    const { userId, amount, personalAccountCurrency, personalAccountAddress, withdrawalType } = req.body;
+    const { userId, amount, personalAccountCurrency, personalAccountAddress, withdrawalType, /* Include other fields as needed */ } = req.body;
 
     // Find the user by ID
     const user = await User.findById(userId);
@@ -13,61 +13,17 @@ const withdraw = async (req, res) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
-    // Check the withdrawal type and update the user's wallet accordingly
     switch (withdrawalType) {
       case 'balanceToPersonalAccount':
-        // Consider the withdrawal amount as pending for balanceToPersonalAccount
-        const withdrawalBalanceToPersonal = new Withdraw({
-          user: userId,
-          amount,
-          withdrawalType,
-          status: 'pending', // Set status as pending
-          personalAccountCurrency,
-          personalAccountAddress,
-        });
-        await withdrawalBalanceToPersonal.save();
+        // Handle balanceToPersonalAccount withdrawal
         break;
 
       case 'investmentToBalance':
-        if (user.wallet.investment >= amount) {
-          user.wallet.investment -= amount;
-          user.wallet.balance += amount;
-          user.wallet.total -= amount; // Adjust total wallet value
-
-          // Set 'approved' status for investmentToBalance by default
-          const withdrawalInvestment = new Withdraw({
-            user: userId,
-            amount,
-            withdrawalType,
-            status: 'approved', // Set default status
-            personalAccountCurrency,
-            personalAccountAddress,
-          });
-          await withdrawalInvestment.save();
-        } else {
-          return res.status(400).json({ error: 'Insufficient investment balance' });
-        }
+        // Handle investmentToBalance withdrawal
         break;
 
       case 'interestToBalance':
-        if (user.wallet.interest >= amount) {
-          user.wallet.interest -= amount;
-          user.wallet.balance += amount;
-          user.wallet.total += amount; // Adjust total wallet value
-
-          // Set 'approved' status for interestToBalance by default
-          const withdrawalInterest = new Withdraw({
-            user: userId,
-            amount,
-            withdrawalType,
-            status: 'approved', // Set default status
-            personalAccountCurrency,
-            personalAccountAddress,
-          });
-          await withdrawalInterest.save();
-        } else {
-          return res.status(400).json({ error: 'Insufficient interest balance' });
-        }
+        // Handle interestToBalance withdrawal
         break;
 
       default:
@@ -84,9 +40,7 @@ const withdraw = async (req, res) => {
         user: userId,
         amount,
         withdrawalType,
-        status: withdrawalType === 'balanceToPersonalAccount' ? 'pending' : 'approved',
-        personalAccountCurrency,
-        personalAccountAddress,
+        // Include other fields as needed
       },
     };
 
@@ -96,6 +50,7 @@ const withdraw = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
 
 
 const updateWithdrawal = async (req, res) => {
@@ -168,13 +123,59 @@ const updateWithdrawal = async (req, res) => {
 };
 
 
+const getAllWithdrawals = async (req, res) => {
+  try {
+    const withdrawals = await Withdraw.find();
+    res.status(200).json({ withdrawals });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
+
+const getWithdrawalById = async (req, res) => {
+  try {
+    const { withdrawalId } = req.params;
+    const withdrawal = await Withdraw.findById(withdrawalId);
+
+    if (!withdrawal) {
+      return res.status(404).json({ error: 'Withdrawal not found' });
+    }
+
+    res.status(200).json({ withdrawal });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
+
+const getUserWithdrawals = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const withdrawals = await Withdraw.find({ user: userId });
+
+    res.status(200).json({ withdrawals });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
+
+
 
 
 
 const withdrawController = {
   withdraw,
   updateWithdrawal,
-    
+  getAllWithdrawals,
+  getWithdrawalById,
+  getUserWithdrawals,
 };
 
 module.exports = withdrawController;
