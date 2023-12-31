@@ -5,7 +5,7 @@ const Withdraw = require('../models/withdraw');
 
 const withdraw = async (req, res) => {
   try {
-    const { userId, amount, personalAccountCurrency, personalAccountAddress, withdrawFrom, withdrawTo, transactionId, balance, investment, interest, } = req.body;
+    const { userId, amount, personalAccountCurrency, personalAccountAddress, withdrawFrom, withdrawTo, balance, investment, interest, } = req.body;
 
     // Find the user by ID
     const user = await User.findById(userId);
@@ -28,6 +28,16 @@ const withdraw = async (req, res) => {
       return res.status(400).json({ error: 'Invalid withdrawal combination' });
     }
 
+    // declared withdrawal id
+    let withdrawalId;
+    // Generate a unique short ID for the transaction
+    const options = {
+      length: 5,
+    };
+
+    const transactionId = shortid.generate(options);
+    console.log(transactionId);
+
     // Handle the withdrawal based on the determined withdrawal type
     switch (withdrawalType) {
       case 'balanceToPersonalAccount':
@@ -45,6 +55,7 @@ const withdraw = async (req, res) => {
           transactionId
         });
         await withdrawalBalanceToPersonal.save();
+        withdrawalId = withdrawalBalanceToPersonal._id;
         break;
 
       case 'investmentToBalance':
@@ -71,6 +82,7 @@ const withdraw = async (req, res) => {
 
           });
           await withdrawalInvestment.save();
+          withdrawalId = withdrawalInvestment._id;
         } else {
           return res.status(400).json({ error: 'Insufficient investment balance' });
         }
@@ -86,13 +98,7 @@ const withdraw = async (req, res) => {
           const approvalThresholdInterest = 500; // Set your threshold value for interest
           const statusInterest = amount <= approvalThresholdInterest ? 'approved' : 'pending';
 
-          // Generate a unique short ID for the transaction
-          const options = {
-            length: 5,
-          };
 
-          const transactionId = shortid.generate(options);
-          console.log(transactionId);
 
           const withdrawalInterest = new Withdraw({
             user: userId,
@@ -107,6 +113,7 @@ const withdraw = async (req, res) => {
             transactionId
           });
           await withdrawalInterest.save();
+          withdrawalId = withdrawalInterest._id;
         } else {
           return res.status(400).json({ error: 'Insufficient interest balance' });
         }
@@ -121,8 +128,9 @@ const withdraw = async (req, res) => {
 
     // Update the user model with the new withdraw ObjectId
     await User.findByIdAndUpdate(userId, {
-      $push: { withdraw: Withdraw._id }
+      $push: { withdraw: withdrawalId }
     });
+
 
     // Return withdrawal response data
     const responseData = {
