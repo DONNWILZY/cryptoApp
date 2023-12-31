@@ -30,13 +30,14 @@ const withdraw = async (req, res) => {
 
     // declared withdrawal id
     let withdrawalId;
+
     // Generate a unique short ID for the transaction
     const options = {
       length: 5,
     };
 
     const transactionId = shortid.generate(options);
-    console.log(transactionId);
+    // console.log(transactionId);
 
     // Handle the withdrawal based on the determined withdrawal type
     switch (withdrawalType) {
@@ -132,22 +133,22 @@ const withdraw = async (req, res) => {
     });
 
 
-    // Return withdrawal response data
-    const responseData = {
-      message: 'Withdrawal request submitted successfully',
-      withdrawal: {
-        user: userId,
-        amount,
-        withdrawalType,
-        transactionId,
-        balance,
-        investment,
-        interest,
-        status: withdrawalType === 'balanceToPersonalAccount' ? 'pending' : 'approved',
-        personalAccountCurrency,
-        personalAccountAddress,
-      },
-    };
+  // Return withdrawal response data
+const responseData = {
+  message: 'Withdrawal request submitted successfully',
+  withdrawal: {
+    user: userId,
+    amount,
+    withdrawalType,
+    transactionId,
+    balance,       
+    investment,    
+    interest,       
+    status: withdrawalType === 'balanceToPersonalAccount' ? 'pending' : 'approved',
+    personalAccountCurrency,
+    personalAccountAddress,
+  },
+};
 
     res.status(200).json(responseData);
   } catch (error) {
