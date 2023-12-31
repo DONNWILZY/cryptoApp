@@ -42,6 +42,7 @@ const InvestmentPlanSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
     },
+    
     interestCounter: {
       perHour: {
         type: Number,

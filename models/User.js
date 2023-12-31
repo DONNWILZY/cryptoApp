@@ -3,7 +3,7 @@ const Buy = require('./Buy'); // Adjust the path as needed
 
 
 const UserSchema = new mongoose.Schema({
-    
+
     firstName: {
         type: String,
         trim: true
@@ -21,7 +21,8 @@ const UserSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        trim: true
+        trim: true,
+        minlength: 8,
     },
     username: {
         type: String,
@@ -41,7 +42,7 @@ const UserSchema = new mongoose.Schema({
         type: String
         // You can add further validations or requirements as needed
     },
-    
+
     wallet: {
         balance: {
             type: Number,
@@ -61,7 +62,7 @@ const UserSchema = new mongoose.Schema({
         }
         // You can include additional wallet properties like transaction history, etc.
     },
-   
+
     role: {
         type: String,
         enum: ['isAdmin', 'isUser'],
@@ -72,17 +73,23 @@ const UserSchema = new mongoose.Schema({
         default: false
     },
     gender: {
-        type: String
-        // You can add further validations or requirements as needed
+        type: String,
+        default: 'undisclosed' 
     },
     dob: {
-        type: Date
-        // You can add further validations or requirements as needed
+        type: Date,
+        default: null,
+        
     },
-      // Reference to subscribed investment plans (array of ObjectIds)
-      subscribedPlans: [{
+    // Reference to subscribed investment plans (array of ObjectIds)
+    subscribedPlans: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'InvestmentPlan'
+    }],
+
+    withdraw: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Withdraw'
     }],
 
     // Reference to multiple deposit proofs submitted by the user (array of ObjectIds)
@@ -109,7 +116,8 @@ const UserSchema = new mongoose.Schema({
     sell: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Sell'
-    }]
+    }],
+
 
 
 
@@ -120,7 +128,7 @@ UserSchema.pre('save', function (next) {
     // Calculate the total value by summing up all wallet fields
     this.wallet.total = this.wallet.balance + this.wallet.investment + this.wallet.interest;
     next();
-  });
+});
 
 const User = mongoose.model('User', UserSchema);
 

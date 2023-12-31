@@ -1,27 +1,36 @@
 const express = require('express');
 const router = express.Router();
-const { initiateRetrieval, updateReversalStatus, attachProofAndSetPendingStatusForReversal, getAllReversals, getReversalById, getAllReversalsForUser, getReversalForUserById, deleteReversal} = require('../controllers/reversalController');
+const { initiateRetrieval,
+    updateReversalStatus,
+    attachProofAndSetPendingStatusForReversal, 
+    getAllReversals, 
+    getReversalById, 
+    getAllReversalsForUser, 
+    getReversalForUserById, 
+    deleteReversal,
+    addAdminNoteToReversal,
+ } = require('../controllers/reversalController');
 
 // Route to initiate retrieval
 // router.post('/initiate', initiateRetrieval);
 
 router.post('/initiate', async (req, res) => {
-  const { userId, amount, dateInitiated, depositAddress, withdrawTo, yourAddress, comment, CurrencyDeposited } = req.body;
+    const { userId, amount, dateInitiated, depositAddress, withdrawTo, yourAddress, comment, CurrencyDeposited } = req.body;
 
-  initiateRetrieval(userId, amount,dateInitiated, depositAddress, withdrawTo, yourAddress, comment, CurrencyDeposited, (error, result) => {
-      if (error) {
-          return res.status(500).json({
-              success: false,
-              message: 'Failed to initiate retrieval',
-          });
-      }
+    initiateRetrieval(userId, amount, dateInitiated, depositAddress, withdrawTo, yourAddress, comment, CurrencyDeposited, (error, result) => {
+        if (error) {
+            return res.status(500).json({
+                success: false,
+                message: 'Failed to initiate retrieval',
+            });
+        }
 
-      res.status(200).json({
-          success: true,
-          message: 'Retrieval initiated successfully',
-          data: result,
-      });
-  });
+        res.status(200).json({
+            success: true,
+            message: 'Retrieval initiated successfully',
+            data: result,
+        });
+    });
 });
 
 
@@ -90,7 +99,7 @@ router.put('/reversal/:reversalId', async (req, res) => {
     }
 });
 
-router.get('/reversals', getAllReversals); 
+router.get('/reversals', getAllReversals);
 
 // Get a single reversal by ID
 router.get('/reversals/:id', getReversalById);
@@ -103,6 +112,10 @@ router.get('/users/:userId/:id', getReversalForUserById);
 
 // DELETE a reversal by ID
 router.delete('/delete/:id', deleteReversal);
+
+// POST to add admin note to a reversal by ID
+router.post('/adminnotes/:id', addAdminNoteToReversal);
+
 
 
 

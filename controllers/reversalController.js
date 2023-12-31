@@ -58,7 +58,7 @@ const updateReversalStatus = async (reversalId, status, adminNote) => {
             return null;
         }
 
-        // Generate a unique short ID for the transaction (you may need to import shortid)
+        // Generate a unique short ID for the transaction 
         const transactionId = shortid.generate();
 
         // Update the status and adminNote on both Reversal and Proof
@@ -241,6 +241,35 @@ const getAllReversals = async (req, res) => {
       res.status(500).json({ message: 'Internal Server Error' });
     }
   };
+
+
+  ///// admin note //
+  const addAdminNoteToReversal = async (req, res) => {
+    const reversalId = req.params.id;
+    const { adminNotes } = req.body;
+  
+    try {
+      // Find the reversal by ID and update the adminNote field
+      const result = await Reversal.findByIdAndUpdate(
+        reversalId,
+        {
+          $push: { adminNote: adminNotes },
+        },
+        { new: true }
+      );
+  
+      if (!result) {
+        return res.status(404).json({ message: 'Reversal not found' });
+      }
+  
+      res.json({ message: 'Admin note added to reversal successfully', data: result });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Internal Server Error' });
+    }
+  };
+  
+  
  
   
   
@@ -273,6 +302,7 @@ module.exports = {
   getReversalById, 
   getAllReversalsForUser, 
   getReversalForUserById,
-  deleteReversal
+  deleteReversal,
+  addAdminNoteToReversal
   
 };

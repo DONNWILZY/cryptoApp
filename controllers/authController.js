@@ -133,7 +133,7 @@ const registerUser = async (req, res) => {
             { userId: user._id },
             process.env.JWT_SEC_KEY,
             {
-                expiresIn: '100h',
+                expiresIn: '1h',
             }
         );
 

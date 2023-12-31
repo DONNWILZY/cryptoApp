@@ -2,7 +2,6 @@ const Proof = require('../models/proof');
 const  {populate}  = require('mongoose');
 const User = require('../models/User');
 
-// Get all proofs of payment with associated data
 // Get all proofs with associated data
 const getAllProofs = async (req, res) => {
     try {
@@ -34,7 +33,7 @@ const getAllProofs = async (req, res) => {
   
 
 
-// Get a proof by ID with associated data
+
 // Get a proof by ID with associated data
 const getProofById = async (req, res) => {
     try {
