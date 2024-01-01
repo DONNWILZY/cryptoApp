@@ -14,7 +14,7 @@ router.get('/users/:userId', getUserById);
 router.get('/users', async (req, res) => {
     try {
         const users = await User.find({}, '-password').populate({
-            path: 'subscribedPlans depositProofs buy swap reversal sell',
+            path: 'subscribedPlans depositProofs buy swap reversal sell withdraw',
             select: '-proofImage', // Exclude proofImage field from populated documents
         });
 

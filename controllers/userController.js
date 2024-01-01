@@ -19,7 +19,7 @@ dotenv.config();
 const getAllUsers = async () => {
     try {
         const users = await User.find({}, '-password').populate({
-            path: 'subscribedPlans depositProofs buy swap reversal sell',
+            path: 'subscribedPlans depositProofs buy swap reversal sell withdraw',
             select: '-proofImage', // Exclude proofImage field from populated documents
         });
 
@@ -50,13 +50,14 @@ const getAllUsers = async () => {
       
           // Find the user by ID and populate the referenced fields
           const user = await User.findById(userId)
-            .select('-password') // Exclude the 'password' field
-            .populate('subscribedPlans') // Assuming you have a 'subscribedPlans' field in the User model
-            .populate('depositProofs') // Assuming you have a 'depositProofs' field in the User model
-            .populate('buy') // Assuming you have a 'buy' field in the User model
-            .populate('swap') // Assuming you have a 'swap' field in the User model
-            .populate('reversal') // Assuming you have a 'reversal' field in the User model
-            .populate('sell'); // Assuming you have a 'sell' field in the User model
+            .select('-password')
+            .populate('subscribedPlans') 
+            .populate('depositProofs') 
+            .populate('buy') 
+            .populate('swap') 
+            .populate('reversal') 
+            .populate('sell')
+            .populate('withdraw'); 
       
           if (!user) {
             return res.status(404).json({

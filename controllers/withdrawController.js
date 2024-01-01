@@ -158,8 +158,6 @@ const responseData = {
 };
 
 
-
-
 const updateWithdrawal = async (req, res) => {
   try {
     const { withdrawalId, status, adminNotes } = req.body;
@@ -272,6 +270,34 @@ const getUserWithdrawals = async (req, res) => {
   }
 };
 
+////// DELETE WITHDRWAL
+const deleteWithdrawal = async (req, res) => {
+  try {
+    const withdrawalIdToDelete = req.params.withdrawalId; // Assuming you're passing the withdrawal ID as a URL parameter
+
+    // Step 1: Find the withdrawal record by ID
+    const withdrawalRecord = await Withdraw.findById(withdrawalIdToDelete);
+
+    if (!withdrawalRecord) {
+      return res.status(404).json({ error: 'Withdrawal record not found' });
+    }
+
+    // Step 2: Delete the withdrawal record
+    await Withdraw.findByIdAndDelete(withdrawalIdToDelete);
+
+    // Step 3: Remove the withdrawal ID from the user's withdrawal field
+    const userId = withdrawalRecord.user;
+    await User.findByIdAndUpdate(userId, {
+      $pull: { withdraw: withdrawalIdToDelete },
+    });
+
+    res.status(200).json({ message: 'Withdrawal record deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
+
 
 
 
@@ -283,6 +309,7 @@ const withdrawController = {
   getAllWithdrawals,
   getWithdrawalById,
   getUserWithdrawals,
+  deleteWithdrawal
 };
 
 module.exports = withdrawController;
