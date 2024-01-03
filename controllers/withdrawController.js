@@ -42,23 +42,35 @@ const withdraw = async (req, res) => {
     // Handle the withdrawal based on the determined withdrawal type
     switch (withdrawalType) {
       case 'balanceToPersonalAccount':
-        // Consider the withdrawal amount as pending for balanceToPersonalAccount
-        const withdrawalBalanceToPersonal = new Withdraw({
-          user: userId,
-          amount,
-          balance,
-          investment,
-          interest,
-          withdrawalType,
-          status: 'pending', // Set status as pending
-          personalAccountCurrency,
-          personalAccountAddress,
-          transactionId
-        });
-        await withdrawalBalanceToPersonal.save();
-        withdrawalId = withdrawalBalanceToPersonal._id;
+        if (user.wallet.balance >= amount) {
+            // Subtract the withdrawal amount from the user's balance
+            user.wallet.balance -= amount;
+    
+            // Create a new withdrawal document
+            const withdrawalBalanceToPersonal = new Withdraw({
+                user: userId,
+                amount,
+                balance,
+                investment,
+                interest,
+                withdrawalType,
+                status: 'pending',
+                personalAccountCurrency,
+                personalAccountAddress,
+                transactionId
+            });
+    
+            // Save the withdrawal document
+            await withdrawalBalanceToPersonal.save();
+    
+            // Get the withdrawal ID for further processing
+            withdrawalId = withdrawalBalanceToPersonal._id;
+        } else {
+            // If the user has insufficient balance, return an error response
+            return res.status(400).json({ error: 'Insufficient balance for withdrawal' });
+        }
         break;
-
+    
       case 'investmentToBalance':
         if (user.wallet.investment >= amount) {
           user.wallet.investment -= amount;
@@ -66,7 +78,7 @@ const withdraw = async (req, res) => {
           user.wallet.total -= amount; // Adjust total wallet value
 
           // Set 'approved' status for investmentToBalance by default if amount is below a certain threshold
-          const approvalThreshold = 1000; // Set your threshold value
+          const approvalThreshold = 100; // Set your threshold value
           const status = amount <= approvalThreshold ? 'approved' : 'pending';
 
           const withdrawalInvestment = new Withdraw({
@@ -96,7 +108,7 @@ const withdraw = async (req, res) => {
           user.wallet.total += amount; // Adjust total wallet value
 
           // Set 'approved' status for interestToBalance by default if amount is below a certain threshold
-          const approvalThresholdInterest = 500; // Set your threshold value for interest
+          const approvalThresholdInterest = 100; // Set your threshold value for interest
           const statusInterest = amount <= approvalThresholdInterest ? 'approved' : 'pending';
 
 
